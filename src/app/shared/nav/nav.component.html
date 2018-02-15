@@ -1,0 +1,8 @@
+
+<ng-container>
+  <app-visitor-navbar *ngIf="!user"></app-visitor-navbar>
+
+  <ng-container *ngIf="user">
+    <app-buyer-navbar *ngIf="user.role === 'buyer'"></app-buyer-navbar>
+  </ng-container>
+</ng-container>
