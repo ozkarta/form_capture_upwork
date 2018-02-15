@@ -11,10 +11,12 @@ const MongoStore = require('connect-mongo')(session);
 const app = express();
 const server = http.Server(app);
 
+const staticDBUrl = 'mongodb://heroku_5hw5hpkv:ed2df3l29hifcjr1vkchi89att@ds239128.mlab.com:39128/heroku_5hw5hpkv';
+
 // Mongoose setup
 mongoose.Promise = global.Promise;
-if (process.env.DB_CONNECTION) {
-  mongoose.connect(process.env.DB_CONNECTION);
+if (process.env.DB_CONNECTION || staticDBUrl) {
+  mongoose.connect(process.env.DB_CONNECTION || staticDBUrl);
   const db = mongoose.connection;
   db.on('error', function(err){
     console.error(err);
