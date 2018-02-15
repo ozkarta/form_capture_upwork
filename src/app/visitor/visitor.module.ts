@@ -8,11 +8,15 @@ import {RouterModule} from '@angular/router';
 import {VisitorHomeComponent} from './home/home.component';
 import {VisitorNavComponent} from './nav/nav.component';
 import {VisitorRoutingModule} from './routes';
+import {LoginComponent} from './login/login.component';
+import {RegisterComponent} from './register/register.component';
 
 @NgModule({
     declarations: [
         VisitorHomeComponent,
-        VisitorNavComponent
+        VisitorNavComponent,
+        LoginComponent,
+        RegisterComponent
     ],
     imports: [
         BrowserModule,
@@ -27,7 +31,9 @@ import {VisitorRoutingModule} from './routes';
     exports: [
         RouterModule,
         VisitorHomeComponent,
-        VisitorNavComponent
+        VisitorNavComponent,
+        LoginComponent,
+        RegisterComponent
     ]
 })
 
