@@ -6,11 +6,13 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {RouterModule} from '@angular/router';
 import {BuyerNavComponent} from './nav/nav.component';
 import {BuyerRoutingModule} from './routes';
+import {BuyerHomeComponent} from './home/home.component';
 
 
 @NgModule({
     declarations: [
-        BuyerNavComponent
+        BuyerNavComponent,
+        BuyerHomeComponent
     ],
     imports: [
         BrowserModule,
@@ -24,7 +26,8 @@ import {BuyerRoutingModule} from './routes';
     ],
     exports: [
         RouterModule,
-        BuyerNavComponent
+        BuyerNavComponent,
+        BuyerHomeComponent
     ]
 })
 
