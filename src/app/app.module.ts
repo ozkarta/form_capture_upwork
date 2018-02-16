@@ -12,11 +12,13 @@ import {MainNavComponent} from './shared/nav/nav.component';
 import {AppService} from './shared/service/app.service';
 import {UserService} from './shared/service/user.service';
 import {BuyerModule} from './buyer/buyer.module';
+import {MessengerComponent} from './shared/messenger/messenger.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MainNavComponent
+    MainNavComponent,
+    MessengerComponent
   ],
   imports: [
     BrowserModule,

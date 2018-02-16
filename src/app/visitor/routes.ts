@@ -4,11 +4,16 @@ import {Routes, RouterModule} from '@angular/router';
 import {VisitorHomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
+import {MessengerComponent} from '../shared/messenger/messenger.component';
 
 export const routes: Routes = [
     {
         path: '',
         component: VisitorHomeComponent
+    },
+    {
+        path: 'chat',
+        component: MessengerComponent
     },
     {
         path: 'login',
