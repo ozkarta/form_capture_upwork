@@ -6,6 +6,8 @@ import {ChatService} from '../service/ws-chat.service';
 })
 
 export class MessengerComponent implements OnInit {
+    public selectedChat: any = null;
+
     constructor(private chatService: ChatService) {
     }
 

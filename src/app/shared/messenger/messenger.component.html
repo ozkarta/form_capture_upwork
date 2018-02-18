@@ -1,1 +1,76 @@
-Messenger
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-md-4 bg-white ">
+            <div class=" row border-bottom padding-sm" style="height: 40px;">
+                Members
+            </div>
+
+            <!-- =============================================================== -->
+            <!-- member list -->
+            <ul class="friend-list">
+
+
+                <li  class="active bounceInDown">
+                    <a class="clearfix">
+                        <div class="friend-name">
+                            <strong >ozbegi kartvelishvili</strong>
+                        </div>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+        <!--=========================================================-->
+        <!-- selected chat -->
+
+        <ng-container *ngIf="selectedChat">
+            <div class="col-md-8 bg-white ">
+                <div class="chat-message">
+                    <ul class="chat">
+
+                        <li  class="right clearfix">
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Ozbegi Kartvelishvili</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                                </div>
+                                <p>
+                                    this is message text
+                                </p>
+                            </div>
+                        </li>
+
+                        <li  class="left clearfix">
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">ozkart</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                                </div>
+                                <p>
+                                    reply
+                                </p>
+                            </div>
+                        </li>
+
+
+                    </ul>
+                </div>
+
+                <form  >
+                    <div class="chat-box bg-white">
+                        <div class="input-group">
+                            <input class="form-control border no-shadow no-rounded" placeholder="Type your message here">
+                            <span class="input-group-btn">
+											<input class="btn btn-success no-rounded" type="submit" value="send">
+						</span>
+                        </div>
+                        <!-- /input-group -->
+                    </div>
+                </form>
+
+            </div>
+        </ng-container>
+
+    </div>
+</div>
