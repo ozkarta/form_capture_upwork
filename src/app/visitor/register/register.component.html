@@ -1,36 +1,63 @@
 <div class="registration-component">
   <h4>Registration</h4>
-  <form class="form-inline">
+  <form class="form-inline" #registrationForm="ngForm">
     <ul class="registration-inputs">
       <li>
         <p>First name</p>
-        <input class="form-control" type="text" placeholder="First Name"></li>
+        <input class="form-control" type="text" placeholder="First Name" name="firstName" [(ngModel)]="user['firstName']" required></li>
+        <div *ngIf="registrationFormErrors['firstName']">
+          {{registrationFormErrors['firstName']}}
+        </div>
       <li>
         <p>Last Name</p>
-        <input class="form-control" type="text" placeholder="Last Name"></li>
+        <input class="form-control" type="text" placeholder="Last Name" name="lastName" [(ngModel)]="user['lastName']" required></li>
+        <div *ngIf="registrationFormErrors['lastName']">
+          {{registrationFormErrors['lastName']}}
+        </div>
       <li>
         <p>Email</p>
-        <input class="form-control" type="text" placeholder="Email"></li>
+        <input class="form-control" type="text" placeholder="Email" name="email" [(ngModel)]="user['email']"  required pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$"></li>
+        <div *ngIf="registrationFormErrors['email']">
+          {{registrationFormErrors['email']}}
+        </div>
       <li>
         <p>Password</p>
-        <input class="form-control" type="password" placeholder="Password"></li>
+        <input class="form-control" type="password" placeholder="Password" name="password" [(ngModel)]="user['password']"  required></li>
+        <div *ngIf="registrationFormErrors['password']">
+          {{registrationFormErrors['password']}}
+        </div>
       <li>
         <p>Country</p>
-        <input class="form-control" type="text" placeholder="Country"></li>
+        <input class="form-control" type="text" placeholder="Country" name="country" [(ngModel)]="user['country']" required></li>
+        <div *ngIf="registrationFormErrors['country']">
+          {{registrationFormErrors['country']}}
+        </div>
       <li>
         <p>Province</p>
-        <input class="form-control" type="text" placeholder="Province"></li>
+        <input class="form-control" type="text" placeholder="Province" name="province" [(ngModel)]="user['province']" required></li>
+        <div *ngIf="registrationFormErrors['province']">
+          {{registrationFormErrors['province']}}
+        </div>
       <li>
         <p>City</p>
-        <input class="form-control" type="text" placeholder="City"></li>
+        <input class="form-control" type="text" placeholder="City" name="city" [(ngModel)]="user['city']" required></li>
+        <div *ngIf="registrationFormErrors['city']">
+          {{registrationFormErrors['city']}}
+        </div>
       <li>
         <p>Street</p>
-        <input class="form-control" type="text" placeholder="Street"></li>
+        <input class="form-control" type="text" placeholder="Street" name="street" [(ngModel)]="user['street']" required></li>
+        <div *ngIf="registrationFormErrors['street']">
+          {{registrationFormErrors['street']}}
+        </div>
       <li>
         <p>Postal Code</p>
-        <input class="form-control" type="text" placeholder="Postal Code"></li>
+        <input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="user['zip']" required></li>
+        <div *ngIf="registrationFormErrors['zip']">
+          {{registrationFormErrors['zip']}}
+        </div>
     </ul>
-    <button class="btn btn-outline-success submit-registration" type="submit">Submit</button>
+    <button class="btn btn-outline-success submit-registration" type="submit" (click)="register()" [disabled]="!registrationForm.form.valid">Submit</button>
 
 
 

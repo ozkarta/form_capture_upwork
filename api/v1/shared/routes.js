@@ -7,7 +7,7 @@ module.exports = function (express) {
 
   let userController = require('../controller/shared/user.controller')(express);
 
-  router.use('/user', userController);
+  router.use('/users', userController);
 
   return router;
 };
