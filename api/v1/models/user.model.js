@@ -9,7 +9,7 @@ let userSchema = new mongoose.Schema({
         city: {type: String, trim: true},
         province: {type: String, trim: true},
         country: {type: String, trim: true},
-        postalCode: {type: String, trim: true}
+        zip: {type: String, trim: true}
     },
 
     passwordHash: {type: String},

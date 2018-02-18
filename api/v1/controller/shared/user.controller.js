@@ -8,7 +8,25 @@ module.exports = function (express) {
     let util = require('../../shared/util/util');
 
     router.get('/', (req, res) => {
-        return res.status(200).json({});
+        let zip;
+
+        if (req.query && req.query.zip) {
+            zip = req.query.zip;
+        }
+
+        if (zip) {
+            UserModel.find({'address.zip': zip})
+                .select('updatedAt createdAt firstName lastName email address role')
+                .then(users => {
+                    return res.status(200).json({users: users});
+                })
+                .catch(err => {
+                    return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
+                });
+        } else {
+            return res.status(200).json({users: []});
+        }
+
     });
 
     router.post('/register', (req, res) => {

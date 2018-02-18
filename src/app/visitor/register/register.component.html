@@ -28,31 +28,31 @@
         </div>
       <li>
         <p>Country</p>
-        <input class="form-control" type="text" placeholder="Country" name="country" [(ngModel)]="user['country']" required></li>
+        <input class="form-control" type="text" placeholder="Country" name="country" [(ngModel)]="user['address']['country']" required></li>
         <div *ngIf="registrationFormErrors['country']">
           {{registrationFormErrors['country']}}
         </div>
       <li>
         <p>Province</p>
-        <input class="form-control" type="text" placeholder="Province" name="province" [(ngModel)]="user['province']" required></li>
+        <input class="form-control" type="text" placeholder="Province" name="province" [(ngModel)]="user['address']['province']" required></li>
         <div *ngIf="registrationFormErrors['province']">
           {{registrationFormErrors['province']}}
         </div>
       <li>
         <p>City</p>
-        <input class="form-control" type="text" placeholder="City" name="city" [(ngModel)]="user['city']" required></li>
+        <input class="form-control" type="text" placeholder="City" name="city" [(ngModel)]="user['address']['city']" required></li>
         <div *ngIf="registrationFormErrors['city']">
           {{registrationFormErrors['city']}}
         </div>
       <li>
         <p>Street</p>
-        <input class="form-control" type="text" placeholder="Street" name="street" [(ngModel)]="user['street']" required></li>
+        <input class="form-control" type="text" placeholder="Street" name="street" [(ngModel)]="user['address']['street']" required></li>
         <div *ngIf="registrationFormErrors['street']">
           {{registrationFormErrors['street']}}
         </div>
       <li>
         <p>Postal Code</p>
-        <input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="user['zip']" required></li>
+        <input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="user['address']['zip']" required></li>
         <div *ngIf="registrationFormErrors['zip']">
           {{registrationFormErrors['zip']}}
         </div>

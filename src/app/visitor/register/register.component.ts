@@ -10,7 +10,8 @@ import {Router} from '@angular/router';
 
 export class RegisterComponent implements OnInit, AfterViewChecked {
     public user: any = {
-        role: 'buyer'
+        role: 'buyer',
+        address: {}
     };
     private registrationForm: NgForm;
     @ViewChild('registrationForm') viewRegistrationForm: NgForm;
