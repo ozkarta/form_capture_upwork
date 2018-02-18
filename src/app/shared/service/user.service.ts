@@ -14,7 +14,7 @@ export class UserService {
   public registerUser(user: any): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}/users/register`, user)
       .map(res => {
-        return res;
+        return this.setUserInBworserAfterLogIn(res);
       })
       .catch((error:Response|any) => {
         return Observable.throw(error);
@@ -24,17 +24,7 @@ export class UserService {
   public signInUser(userLike: any): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}/users/sign-in`, userLike)
       .map((res: any) => {
-
-        if (res != null && res.token != null && res.auth == true) {
-          localStorage.setItem('token', JSON.stringify(res.token));
-          localStorage.setItem('user', JSON.stringify(res.user));
-          this.appService.isLoggedIn.next(true);
-          this.appService.user.next(res.user);
-          return res;
-        } else {
-          return Observable.throw({message: 'Incorrect Response'});
-        }
-
+        return this.setUserInBworserAfterLogIn(res);
       })
       .catch((error:Response|any) => {
         return Observable.throw(error);
@@ -59,5 +49,17 @@ export class UserService {
       .catch((error:Response|any) => {
         return Observable.throw(error);
       });
+  }
+
+  private setUserInBworserAfterLogIn(res: any) {
+      if (res != null && res.token != null && res.auth == true) {
+          localStorage.setItem('token', JSON.stringify(res.token));
+          localStorage.setItem('user', JSON.stringify(res.user));
+          this.appService.isLoggedIn.next(true);
+          this.appService.user.next(res.user);
+          return res;
+      } else {
+          return Observable.throw({message: 'Incorrect Response'});
+      }
   }
 }

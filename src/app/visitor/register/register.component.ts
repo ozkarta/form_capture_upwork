@@ -2,18 +2,22 @@ import {AfterViewChecked, Component, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../shared/service/user.service';
 import {AppService} from '../../shared/service/app.service';
 import {NgForm} from '@angular/forms';
+import {Router} from '@angular/router';
 @Component({
     templateUrl: './register.component.html',
     styleUrls: ['./register.style.css']
 })
 
 export class RegisterComponent implements OnInit, AfterViewChecked {
-    public user: any = {};
+    public user: any = {
+        role: 'buyer'
+    };
     private registrationForm: NgForm;
     @ViewChild('registrationForm') viewRegistrationForm: NgForm;
 
     constructor(private userService: UserService,
-                public appService: AppService) {
+                public appService: AppService,
+                private router: Router) {
 
     }
 
@@ -52,7 +56,7 @@ export class RegisterComponent implements OnInit, AfterViewChecked {
         this.userService.registerUser(this.user)
             .subscribe(
                 success => {
-                    console.dir(success);
+                    this.router.navigate(['/']);
                 },
                 error => {
                     console.dir(error);
