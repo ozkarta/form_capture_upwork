@@ -7,6 +7,7 @@ import {RouterModule} from '@angular/router';
 import {BuyerNavComponent} from './nav/nav.component';
 import {BuyerRoutingModule} from './routes';
 import {BuyerHomeComponent} from './home/home.component';
+import {BuyerAuthGuard} from './buyer-auth.guard';
 
 
 @NgModule({
@@ -22,7 +23,7 @@ import {BuyerHomeComponent} from './home/home.component';
         BuyerRoutingModule
     ],
     providers: [
-        //VisitorAuthGuard
+        BuyerAuthGuard
     ],
     exports: [
         RouterModule,

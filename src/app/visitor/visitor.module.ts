@@ -10,6 +10,7 @@ import {VisitorNavComponent} from './nav/nav.component';
 import {VisitorRoutingModule} from './routes';
 import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
+import {VisitorAuthGuard} from './visitor-auth.guard';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,7 @@ import {RegisterComponent} from './register/register.component';
         VisitorRoutingModule
     ],
     providers: [
-        //VisitorAuthGuard
+        VisitorAuthGuard
     ],
     exports: [
         RouterModule,

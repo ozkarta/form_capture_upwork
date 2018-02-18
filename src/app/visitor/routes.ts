@@ -5,11 +5,13 @@ import {VisitorHomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
 import {MessengerComponent} from '../shared/messenger/messenger.component';
+import {VisitorAuthGuard} from './visitor-auth.guard';
 
 export const routes: Routes = [
     {
         path: '',
-        component: VisitorHomeComponent
+        component: VisitorHomeComponent,
+        canActivate: [VisitorAuthGuard]
     },
     {
         path: 'chat',
@@ -17,11 +19,13 @@ export const routes: Routes = [
     },
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
+        canActivate: [VisitorAuthGuard]
     },
     {
         path: 'register',
-        component: RegisterComponent
+        component: RegisterComponent,
+        canActivate: [VisitorAuthGuard]
     },
     // {
     //     path: '**',
