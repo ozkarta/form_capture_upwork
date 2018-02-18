@@ -24,10 +24,16 @@
         </li>
 
       </ul>
-          <!-- <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form> -->
+
+
+
+      <div class="form-inline my-2 my-lg-0" *ngIf="sessionUser">
+        <h3>You are logged as {{sessionUser.firstName + ' ' + sessionUser.lastName }}({{sessionUser['phone']}})</h3>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="destroySession()">Destroy Current Session</button>
+      </div>
+
+
+
     </div>
   </div>
 </nav>

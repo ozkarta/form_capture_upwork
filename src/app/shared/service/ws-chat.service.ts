@@ -24,9 +24,33 @@ export class ChatService {
                 }
                 return jsonData;
             });
+
+        this.subscribeChatServer();
+    }
+
+    subscribeChatServer() {
+
+        this.ws.subscribe(
+            successResponse => {
+                //console.dir(success);
+                if (successResponse && successResponse.type === 'NEW_SESSION_REQUEST') {
+                    sessionStorage.setItem('chatSessionId', successResponse.chatSession);
+                }
+            },
+            error => {
+                console.dir(error);
+            }
+        )
     }
 
     sendMessage(message: any) {
         this.ws.next(message);
+    }
+
+    requestNewChatSession() {
+        console.log('Requesting new chat session');
+        this.sendMessage({
+            type: 'NEW_SESSION_REQUEST'
+        });
     }
 }

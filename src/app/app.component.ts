@@ -13,7 +13,6 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.subscribeChatServer();
     this.restoreWebSocketSession();
   }
 
@@ -22,13 +21,13 @@ export class AppComponent implements OnInit{
         isLoggedIn => {
           if (!isLoggedIn) {
             console.log('Not Authenticated');
-            let chatSession = sessionStorage.getItem('chatSession');
+            let chatSession = sessionStorage.getItem('chatSessionId');
             if (!chatSession) {
                 console.log('No Chat Session');
                 this.chatService.connected.subscribe(
                     isConnected => {
                         if (isConnected) {
-                            this.requestNewChatSession();
+                            this.chatService.requestNewChatSession();
                         }
                     }
                 );
@@ -37,27 +36,4 @@ export class AppComponent implements OnInit{
         }
     )
   }
-
-  requestNewChatSession() {
-    console.log('Requesting new chat session');
-    this.chatService.sendMessage({
-        type: 'NEW_SESSION_REQUEST'
-    });
-  }
-
-  subscribeChatServer() {
-
-    this.chatService.ws.subscribe(
-        successResponse => {
-          //console.dir(success);
-            if (successResponse && successResponse.type === 'NEW_SESSION_REQUEST') {
-                sessionStorage.setItem('chatSession', successResponse.chatSession);
-            }
-        },
-        error => {
-          console.dir(error);
-        }
-    )
-  }
-
 }
