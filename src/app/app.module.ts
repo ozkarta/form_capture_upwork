@@ -13,6 +13,9 @@ import {AppService} from './shared/service/app.service';
 import {UserService} from './shared/service/user.service';
 import {BuyerModule} from './buyer/buyer.module';
 import {MessengerComponent} from './shared/messenger/messenger.component';
+import {WebSocketService} from './shared/service/ws.service';
+import {ChatService} from './shared/service/ws-chat.service';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,6 +24,7 @@ import {MessengerComponent} from './shared/messenger/messenger.component';
     MessengerComponent
   ],
   imports: [
+      HttpClientModule,
     BrowserModule,
       FormsModule,
       CommonModule,
@@ -32,7 +36,9 @@ import {MessengerComponent} from './shared/messenger/messenger.component';
   ],
   providers: [
       AppService,
-      UserService
+      UserService,
+      WebSocketService,
+      ChatService
   ],
   bootstrap: [AppComponent]
 })

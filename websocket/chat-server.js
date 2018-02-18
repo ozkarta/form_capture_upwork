@@ -1,9 +1,10 @@
 module.exports.chatServerHandler = (ws) => {
+  console.log('Client is there');
 
   // Welcome message here
-  ws.send(JSON.stringify({}));
+  ws.send(JSON.stringify({wsMessage: 'Welcome There'}));
 
-  ws.on('close', () => {
+  ws.on('open', () => {
     console.log('User connection is Open');
   });
 
