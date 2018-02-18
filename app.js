@@ -7,9 +7,11 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
+const ws = require('ws');
 // Initial and Config Server.
 const app = express();
 const server = http.Server(app);
+const WebSocketServer = ws.Server
 
 const staticDBUrl = 'mongodb://heroku_5hw5hpkv:ed2df3l29hifcjr1vkchi89att@ds239128.mlab.com:39128/heroku_5hw5hpkv';
 
@@ -51,6 +53,7 @@ app.use('/doc', express.static(path.join(__dirname, 'doc')));
 
 // Get our API routes
 const routes = require('./api/v1/shared/routes')(express);
+const webSocketHandler = require('./websocket/chat-server').chatServerHandler;
 
 // Set our api routes
 app.use('/api/v1', routes);
@@ -69,3 +72,6 @@ const port = process.env.PORT || 3000;
 app.set('port', port);
 
 server.listen(port, () => console.log(`Our server is running on: ${port}`));
+
+let wss =new WebSocketServer({ server: server });
+wss.on('connection', webSocketHandler);

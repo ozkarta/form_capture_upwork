@@ -63,6 +63,7 @@
     "string-template": "1.0.0",
     "ts-helpers": "1.1.1",
     "typescript": "2.6.2",
+    "ws": "^4.0.0",
     "zone.js": "0.8.4"
   },
   "devDependencies": {
