@@ -10,5 +10,14 @@ export class MessengerComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.chatService.ws.subscribe(
+            success => {
+                console.dir(success);
+            },
+            error => {
+                console.log(error);
+            }
+        )
+
     }
 }
