@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable}from 'rxjs/Observable';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -11,6 +11,18 @@ export class UserService {
   private apiBaseUrl: string = '/api/v1'
   constructor(private http: HttpClient,
               private appService: AppService) {}
+
+  public getUsersBySearchOptions(options: any): Observable<any> {
+
+      return this.http.get(`${this.apiBaseUrl}/users`, {params: options})
+          .map(res => {
+              return res['users'];
+          })
+          .catch((error:Response|any) => {
+              return Observable.throw(error);
+          });
+
+  }
 
   public registerUser(user: any): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}/users/register`, user)

@@ -8,6 +8,9 @@ module.exports = function (express) {
     let util = require('../../shared/util/util');
 
     router.get('/', (req, res) => {
+        console.dir(req.query);
+        console.dir(req.params);
+
         let zip;
 
         if (req.query && req.query.zip) {
