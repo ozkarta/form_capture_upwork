@@ -22,7 +22,7 @@
         </div>
       <li>
         <p>Password</p>
-        <input class="form-control" type="password" placeholder="Password" name="password" [(ngModel)]="user['password']"  required></li>
+        <input class="form-control" type="password" placeholder="Password" name="password" [(ngModel)]="user['password']"  required minlength="6"></li>
         <div *ngIf="registrationFormErrors['password']">
           {{registrationFormErrors['password']}}
         </div>
