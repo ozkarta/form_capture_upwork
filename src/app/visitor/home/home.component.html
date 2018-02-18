@@ -41,12 +41,12 @@
     <div class="modal-body">
         <form>
             Message
-            <input type="textbox" name="text" [(ngModel)]="message['text']">
+            <input type="textbox" name="text" [(ngModel)]="messageText">
 
             Name
-            <input type="text" name="name" [(ngModel)]="message['name']">
+            <input type="text" name="name" [(ngModel)]="sender['name']">
             Phone
-            <input type="text" name="phone" [(ngModel)]="message['phone']">
+            <input type="text" name="phone" [(ngModel)]="sender['phone']">
             <button type="submit" (click)="sendMessage()">Send</button>
         </form>
     </div>

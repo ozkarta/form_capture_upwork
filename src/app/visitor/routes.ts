@@ -18,6 +18,10 @@ export const routes: Routes = [
         component: MessengerComponent
     },
     {
+        path: 'chat/:id',
+        component: MessengerComponent
+    },
+    {
         path: 'login',
         component: LoginComponent,
         canActivate: [VisitorAuthGuard]

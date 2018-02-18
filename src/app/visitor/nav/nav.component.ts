@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ChatService} from '../../shared/service/ws-chat.service';
+import {AppService} from '../../shared/service/app.service';
 @Component({
     selector: 'app-visitor-navbar',
     templateUrl: './nav.component.html',
@@ -8,14 +9,16 @@ import {ChatService} from '../../shared/service/ws-chat.service';
 
 export class VisitorNavComponent implements OnInit {
     public sessionUser = null;
-    constructor(private chatService: ChatService) {
+    constructor(private chatService: ChatService,
+                private appService: AppService) {
     }
 
     ngOnInit() {
-        let user = sessionStorage.getItem('chatSessionUser');
-        if (user) {
-            this.sessionUser = JSON.parse(user);
-        }
+        this.appService.sessionUser.subscribe(
+            user => {
+                this.sessionUser = user;
+            }
+        )
     }
 
     destroySession() {
@@ -23,5 +26,6 @@ export class VisitorNavComponent implements OnInit {
         sessionStorage.removeItem('chatSessionId');
         this.sessionUser = null;
         this.chatService.requestNewChatSession();
+        this.appService.sessionUser.next(null);
     }
 }
