@@ -1,0 +1,57 @@
+.log-in {
+  margin-top: 15px;
+}
+
+.login-container {
+  display: table;
+  margin: 0 auto;
+}
+
+.login-container h4 {
+  text-align: center;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 15px;
+}
+
+.login-container form input {
+  margin-bottom: 10px;
+  margin-right: 0;
+  width: 300px;
+}
+
+.login-container form button {
+  width: 100%;
+  margin-top: 5px;
+  background-color: #025aa5;
+  padding: 3px 0;
+  font-size: 20px;
+  letter-spacing: .7px;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: #e4e5e6;
+}
+
+.login-container span {
+  display: block;
+  text-align: center;
+}
+
+.registration {
+  width: 100%;
+  padding: 3px 0;
+  font-size: 20px;
+  letter-spacing: .7px;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: #2b902b;
+  color: #e4e5e6;
+}

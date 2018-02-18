@@ -1,0 +1,58 @@
+.registration-component {
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.registration-component form {
+  display: block;
+}
+
+.registration-component h4 {
+  text-align: center;
+}
+
+.registration-inputs {
+  width: 450px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.registration-inputs li {
+  list-style-type: none;
+  width: 218px;
+  margin-bottom: 15px;
+}
+
+.registration-inputs p {
+  margin-bottom: 2px;
+}
+
+.submit-registration {
+  margin: 0 auto;
+  display: block;
+  letter-spacing: .8px;
+  background-color: #1db51a;
+  color: #f3f3f3;
+  padding: 10px 30px;
+  font-size: 20px;
+  margin-top: 15px;
+}
+
+@media screen and (max-width: 500px) {
+  .registration-inputs {
+    width: 100%;
+  }
+
+  .registration-inputs li {
+    margin: 5px 15px;
+    width: 100%;
+  }
+
+  .registration-inputs input {
+    width: 100%;
+  }
+}
