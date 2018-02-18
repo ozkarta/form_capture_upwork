@@ -32,11 +32,12 @@
 
 <ng-template #messageWindow let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h4 class="modal-title">Send Message</h4>
+        <h4 class="modal-title">Send Message to {{activeUser['firstName'] + ' ' + activeUser['lastName']}}</h4>
         <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
+    <!--ეს კლასი არ შეცვალო!!!-->
     <div class="modal-body">
         <form>
             Message

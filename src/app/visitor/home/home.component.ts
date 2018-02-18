@@ -13,6 +13,7 @@ export class VisitorHomeComponent implements OnInit {
     public message: any = {
 
     };
+    public activeUser = null;
 
     public searchResult: any = null;
 
@@ -37,6 +38,7 @@ export class VisitorHomeComponent implements OnInit {
     }
 
     openNewMessageModal(modalWindow, user) {
+        this.activeUser = user;
         this.modalService.open(modalWindow).result.then((result) => {
             // this.closeResult = `Closed with: ${result}`;
         }, (reason) => {
