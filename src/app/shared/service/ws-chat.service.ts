@@ -34,15 +34,18 @@ export class ChatService {
 
         this.ws.subscribe(
             successResponse => {
-                //console.dir(success);
+                console.dir(successResponse);
                 if (successResponse && successResponse.type === 'NEW_SESSION_REQUEST' && successResponse.status === 200) {
                     sessionStorage.setItem('chatSessionId', successResponse.chatSession);
                     this.sessionIdAssigned.next(true);
+
+                    console.log('this.sessionIdAssigned.next(true);')
                 }
 
                 if (successResponse && successResponse.type === 'REGISTER_TEMP_USER' && successResponse.status === 200) {
                     sessionStorage.setItem('chatSessionUser', JSON.stringify(successResponse.user));
                     this.tempUserRegistered.next(successResponse.user);
+                    console.log('!!!!!!!!! this.tempUserRegistered.next(successResponse.user);');
                 }
             },
             error => {

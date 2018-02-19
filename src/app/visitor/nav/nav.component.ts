@@ -17,6 +17,8 @@ export class VisitorNavComponent implements OnInit {
         this.appService.sessionUser
             .subscribe(
                 user => {
+                    console.log('Navbar arrived new value');
+                    console.dir(user);
                     this.sessionUser = user;
                 }
             )
@@ -28,6 +30,6 @@ export class VisitorNavComponent implements OnInit {
         this.sessionUser = null;
         this.appService.sessionUser.next(null);
         this.chatService.requestNewChatSession();
-
+        this.chatService.tempUserRegistered.next(null);
     }
 }

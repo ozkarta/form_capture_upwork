@@ -15,7 +15,7 @@ export class VisitorHomeComponent implements OnInit {
     public searchOptions: any = {
         zip: ''
     };
-    public message: string = '';
+    public messageText: string = '';
     public sender: any = {};
 
     public activeUser = null;
@@ -70,7 +70,8 @@ export class VisitorHomeComponent implements OnInit {
         let chatSession = sessionStorage.getItem('chatSessionId');
         this.chatService.registerTempUser(chatSession, this.sender);
         this.messageToSend = {
-
+            text: this.messageText,
+            to: this.activeUser
         }
     }
 
@@ -79,9 +80,14 @@ export class VisitorHomeComponent implements OnInit {
         this.chatService.tempUserRegistered.subscribe(
             user => {
                 if (user) {
+                    console.log('subscribeChatTempUserRegisteredResponse', user);
                     this.appService.sessionUser.next(user);
                     if (this.messageToSend) {
+                        this.messageToSend.from = user;
                         console.log('Ready to send message...');
+                        console.dir(this.messageToSend);
+                        this.chatService.sendMessage(this.messageToSend);
+
                         // Send Message
                         this.messageToSend = null;
                         if (this.modelRef) {
@@ -93,4 +99,5 @@ export class VisitorHomeComponent implements OnInit {
             }
         )
     }
+
 }

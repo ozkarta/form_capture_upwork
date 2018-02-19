@@ -27,6 +27,7 @@ export class AppComponent implements OnInit{
                 this.chatService.connected.subscribe(
                     isConnected => {
                         if (isConnected) {
+                            console.log('App component');
                             this.chatService.requestNewChatSession();
                         }
                     }
