@@ -41,6 +41,7 @@ export class ChatService {
                 }
 
                 if (successResponse && successResponse.type === 'REGISTER_TEMP_USER' && successResponse.status === 200) {
+                    sessionStorage.setItem('chatSessionUser', JSON.stringify(successResponse.user));
                     this.tempUserRegistered.next(successResponse.user);
                 }
             },

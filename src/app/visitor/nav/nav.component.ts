@@ -26,7 +26,8 @@ export class VisitorNavComponent implements OnInit {
         sessionStorage.removeItem('chatSessionUser');
         sessionStorage.removeItem('chatSessionId');
         this.sessionUser = null;
-        this.chatService.requestNewChatSession();
         this.appService.sessionUser.next(null);
+        this.chatService.requestNewChatSession();
+
     }
 }

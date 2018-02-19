@@ -23,6 +23,7 @@ export class VisitorHomeComponent implements OnInit {
     public sessionUser: any = null;
     public sendMessageReadyState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public modelRef: NgbModalRef;
+    public messageToSend = null;
 
     constructor(private userService: UserService,
                 private modalService: NgbModal,
@@ -68,28 +69,26 @@ export class VisitorHomeComponent implements OnInit {
         console.dir(this.sender);
         let chatSession = sessionStorage.getItem('chatSessionId');
         this.chatService.registerTempUser(chatSession, this.sender);
-        this.sendMessageReadyState.subscribe(
-            readyState => {
-                if (readyState) {
-                    console.log('Ready to send message...');
-                    // Send Message
+        this.messageToSend = {
 
-                    if (this.modelRef) {
-                        this.modelRef.close();
-                        this.modelRef = null;
-                    }
-                }
-            }
-        )
+        }
     }
+
 
     subscribeChatTempUserRegisteredResponse() {
         this.chatService.tempUserRegistered.subscribe(
             user => {
                 if (user) {
-                    sessionStorage.setItem('chatSessionUser', JSON.stringify(user));
                     this.appService.sessionUser.next(user);
-                    this.sendMessageReadyState.next(true);
+                    if (this.messageToSend) {
+                        console.log('Ready to send message...');
+                        // Send Message
+                        this.messageToSend = null;
+                        if (this.modelRef) {
+                            this.modelRef.close();
+                            this.modelRef = null;
+                        }
+                    }
                 }
             }
         )

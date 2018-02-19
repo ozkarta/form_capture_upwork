@@ -10,6 +10,7 @@ export class AppService {
   private _sessionUser: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor() {
+    console.log('Constructor od app.service');
     if (localStorage.getItem('token') && localStorage.getItem('user')) {
       this._loggedIn.next(true);
       this._user.next(<any>JSON.parse(localStorage.getItem('user')));
