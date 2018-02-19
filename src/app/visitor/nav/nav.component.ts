@@ -14,11 +14,12 @@ export class VisitorNavComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.appService.sessionUser.subscribe(
-            user => {
-                this.sessionUser = user;
-            }
-        )
+        this.appService.sessionUser
+            .subscribe(
+                user => {
+                    this.sessionUser = user;
+                }
+            )
     }
 
     destroySession() {

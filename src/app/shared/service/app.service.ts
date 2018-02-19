@@ -17,7 +17,7 @@ export class AppService {
 
     let ssuser = sessionStorage.getItem('chatSessionUser');
     if (ssuser) {
-        this._sessionUser = JSON.parse(ssuser);
+        this._sessionUser.next(JSON.parse(ssuser));
     }
   }
 

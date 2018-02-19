@@ -26,10 +26,12 @@ export class VisitorHomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        let user = sessionStorage.getItem('chatSessionUser');
-        if (user) {
-            this.sessionUser = JSON.parse(user);
-        }
+        this.appService.sessionUser
+            .subscribe(
+                user => {
+                    this.sessionUser = user;
+                }
+            )
     }
 
     search() {
