@@ -9,6 +9,8 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 export class ChatService {
     public ws: Subject<any>;
     public connected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public sessionIdAssigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public tempUserRegistered: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
     constructor(private weService: WebSocketService, private http: HttpClient) {
 
@@ -33,8 +35,13 @@ export class ChatService {
         this.ws.subscribe(
             successResponse => {
                 //console.dir(success);
-                if (successResponse && successResponse.type === 'NEW_SESSION_REQUEST') {
+                if (successResponse && successResponse.type === 'NEW_SESSION_REQUEST' && successResponse.status === 200) {
                     sessionStorage.setItem('chatSessionId', successResponse.chatSession);
+                    this.sessionIdAssigned.next(true);
+                }
+
+                if (successResponse && successResponse.type === 'REGISTER_TEMP_USER' && successResponse.status === 200) {
+                    this.tempUserRegistered.next(successResponse.user);
                 }
             },
             error => {
@@ -51,6 +58,15 @@ export class ChatService {
         console.log('Requesting new chat session');
         this.sendMessage({
             type: 'NEW_SESSION_REQUEST'
+        });
+    }
+
+    registerTempUser(token, user) {
+        console.log('Registering Temporary User');
+        this.sendMessage({
+           type: 'REGISTER_TEMP_USER',
+           token:  token,
+           user: user
         });
     }
 }

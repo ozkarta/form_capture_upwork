@@ -1,8 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../shared/service/user.service';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {Router} from '@angular/router';
 import {AppService} from '../../shared/service/app.service';
+import {ChatService} from '../../shared/service/ws-chat.service';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+
 @Component({
     templateUrl: './home.component.html',
     styleUrls: ['home.style.css']
@@ -18,11 +21,14 @@ export class VisitorHomeComponent implements OnInit {
     public activeUser = null;
     public searchResult: any = null;
     public sessionUser: any = null;
+    public sendMessageReadyState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public modelRef: NgbModalRef;
 
     constructor(private userService: UserService,
                 private modalService: NgbModal,
                 private router: Router,
-                private appService: AppService) {
+                private appService: AppService,
+                private chatService: ChatService) {
     }
 
     ngOnInit() {
@@ -31,7 +37,9 @@ export class VisitorHomeComponent implements OnInit {
                 user => {
                     this.sessionUser = user;
                 }
-            )
+            );
+
+        this.subscribeChatTempUserRegisteredResponse();
     }
 
     search() {
@@ -52,15 +60,38 @@ export class VisitorHomeComponent implements OnInit {
             return;
         }
         this.activeUser = user;
-        this.modalService.open(modalWindow).result.then((result) => {
-            // this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
+        this.modelRef = this.modalService.open(modalWindow);
     }
 
     sendMessage() {
-        sessionStorage.setItem('chatSessionUser', JSON.stringify(this.sender));
-        this.appService.sessionUser.next(this.sender);
+        console.log('Sending Message...');
+        console.dir(this.sender);
+        let chatSession = sessionStorage.getItem('chatSessionId');
+        this.chatService.registerTempUser(chatSession, this.sender);
+        this.sendMessageReadyState.subscribe(
+            readyState => {
+                if (readyState) {
+                    console.log('Ready to send message...');
+                    // Send Message
+
+                    if (this.modelRef) {
+                        this.modelRef.close();
+                        this.modelRef = null;
+                    }
+                }
+            }
+        )
+    }
+
+    subscribeChatTempUserRegisteredResponse() {
+        this.chatService.tempUserRegistered.subscribe(
+            user => {
+                if (user) {
+                    sessionStorage.setItem('chatSessionUser', JSON.stringify(user));
+                    this.appService.sessionUser.next(user);
+                    this.sendMessageReadyState.next(true);
+                }
+            }
+        )
     }
 }
