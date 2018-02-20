@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ChatService} from '../service/ws-chat.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AppService} from '../service/app.service';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 @Component({
@@ -8,7 +8,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
     styleUrls: ['./messenger.style.css']
 })
 
-export class MessengerComponent implements OnInit {
+export class MessengerComponent implements OnInit, OnDestroy {
     public selectedChat: any = null;
     // chat with user
     public userId: string = null;
@@ -17,6 +17,7 @@ export class MessengerComponent implements OnInit {
     public sessionUser: any = null;
     public registeredUser: any = null;
     public wsConnected: any = false;
+    private chatServerWebSocketSubscription = null;
 
     public chats: any[] = [];
 
@@ -24,33 +25,34 @@ export class MessengerComponent implements OnInit {
 
     constructor(private chatService: ChatService,
                 private activeRoute:ActivatedRoute,
-                private appService: AppService) {
+                private appService: AppService,
+                private router: Router) {
 
     }
 
     ngOnInit() {
-        console.log('On Init');
+        // console.log('On Init');
         this.subscribeUrlParams();
-        this.subscribeChatServerWebSocket();
+        //this.subscribeChatServerWebSocket();
         this.subscribeGetChatListTrigger();
-
+        //
         this.appService.sessionUser.subscribe(
             sessionUser => {
-                if (sessionUser) {
                     this.sessionUser = sessionUser;
                     this.getChatListTrigger.next(sessionUser);
-                }
+
             }
         );
 
         this.chatService.connected.subscribe(
             connected => {
                 if (connected) {
+                    console.log('Connected...');
                     this.wsConnected = connected;
                     this.getChatListTrigger.next(connected);
                 }
             }
-        )
+        );
 
         this.appService.user.subscribe(
             buyer => {
@@ -61,7 +63,36 @@ export class MessengerComponent implements OnInit {
             }
         )
 
+        this.chatService.chatListRequestArrived.subscribe(
+            successResponse => {
+                this.chats = successResponse.chats;
+                // If user ID is not  passed then select first and  return
+                if (!this.userId) {
+                    if (this.chats.length) {
+                        this.selectedChat = this.chats[0];
+                    }
+                    return;
+                }
+                this.chats.forEach(chat => {
+                    chat.users.forEach(user => {
+                        if (user['_id'] === this.userId) {
+                            this.selectedChat = chat;
+                        }
+                    })
+                });
 
+                if (!this.selectedChat) {
+                    // TODO create new chat history
+                }
+            }
+        )
+    }
+
+    ngOnDestroy() {
+        if (this.chatServerWebSocketSubscription) {
+            this.chatServerWebSocketSubscription.unsubscribe();
+            this.chatServerWebSocketSubscription = null;
+        }
     }
 
     subscribeUrlParams() {
@@ -71,36 +102,37 @@ export class MessengerComponent implements OnInit {
         });
     }
 
-    subscribeChatServerWebSocket() {
-        this.chatService.ws.subscribe(
-            successResponse => {
-                if (successResponse && successResponse.type === 'CHAT_LIST_REQUEST') {
-                    this.chats = successResponse.chats;
-                    // If user ID is not  passed then select first and  return
-                    if (!this.userId) {
-                        if (this.chats.length) {
-                            this.selectedChat = this.chats[0];
-                        }
-                        return;
-                    }
-                    this.chats.forEach(chat => {
-                        chat.users.forEach(user => {
-                            if (user['_id'] === this.userId) {
-                                this.selectedChat = chat;
-                            }
-                        })
-                    });
-
-                    if (!this.selectedChat) {
-                        // TODO create new chat history
-                    }
-                }
-            },
-            error => {
-                console.log(error);
-            }
-        )
-    }
+    // subscribeChatServerWebSocket() {
+    //     console.log('Subscribing web socket...');
+    //     this.chatServerWebSocketSubscription = this.chatService.ws.subscribe(
+    //         successResponse => {
+    //             if (successResponse && successResponse.type === 'CHAT_LIST_REQUEST') {
+    //                 this.chats = successResponse.chats;
+    //                 // If user ID is not  passed then select first and  return
+    //                 if (!this.userId) {
+    //                     if (this.chats.length) {
+    //                         this.selectedChat = this.chats[0];
+    //                     }
+    //                     return;
+    //                 }
+    //                 this.chats.forEach(chat => {
+    //                     chat.users.forEach(user => {
+    //                         if (user['_id'] === this.userId) {
+    //                             this.selectedChat = chat;
+    //                         }
+    //                     })
+    //                 });
+    //
+    //                 if (!this.selectedChat) {
+    //                     // TODO create new chat history
+    //                 }
+    //             }
+    //         },
+    //         error => {
+    //             console.log(error);
+    //         }
+    //     )
+    // }
 
     subscribeGetChatListTrigger() {
         this.getChatListTrigger.subscribe(val => {

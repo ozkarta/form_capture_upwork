@@ -11,6 +11,7 @@ export class ChatService {
     public connected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public sessionIdAssigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public tempUserRegistered: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+    public chatListRequestArrived: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
     constructor(private weService: WebSocketService, private http: HttpClient) {
 
@@ -46,6 +47,10 @@ export class ChatService {
                     sessionStorage.setItem('chatSessionUser', JSON.stringify(successResponse.user));
                     this.tempUserRegistered.next(successResponse.user);
                     console.log('!!!!!!!!! this.tempUserRegistered.next(successResponse.user);');
+                }
+
+                if (successResponse && successResponse.type === 'CHAT_LIST_REQUEST') {
+                    this.chatListRequestArrived.next(successResponse);
                 }
             },
             error => {
