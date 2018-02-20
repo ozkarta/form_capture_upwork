@@ -25,6 +25,13 @@
   list-style-type: none;
   width: 218px;
   margin-bottom: 15px;
+  height: 70px;
+}
+
+.registration-error {
+  height: 10px;
+  color: #da1414;
+  font-size: 14px;
 }
 
 .registration-inputs p {

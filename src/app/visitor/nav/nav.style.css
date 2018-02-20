@@ -1,3 +1,27 @@
+.logged-as {
+  display: flex;
+  align-items: center;
+}
+
+.logged-as h6 {
+  color: #838c98;
+  margin-bottom: 0;
+}
+
+.logged-as button {
+  margin-left: 15px;
+  font-size: 14px;
+  padding: 6px;
+  background-color: #ececec;
+  color: #644;
+  border: 1px solid #644;
+  cursor: pointer;
+}
+
+.logged-as button:hover {
+  background-color: #e9e0e0;
+}
+
 @media screen and (max-width: 992px) {
   .navbar-toggler {
       display: none!important;

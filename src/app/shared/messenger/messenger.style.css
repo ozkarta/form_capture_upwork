@@ -52,6 +52,10 @@
     right: 8px;
 }
 
+.clearfix {
+  border-radius: 5px;
+}
+
 small,
 .small {
     font-size: 85%;
@@ -163,12 +167,16 @@ img {
     background-color: #fff;
 }
 
+.chatbox-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
 .chat-box {
-    position: fixed;
-    bottom: 0;
-    left: 444px;
-    right: 0;
-    padding: 15px;
+    padding: 15px 0 15px 10px;
+    float: right;
     border-top: 1px solid #eee;
     transition: all .5s ease;
     -webkit-transition: all .5s ease;
