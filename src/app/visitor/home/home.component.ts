@@ -84,6 +84,7 @@ export class VisitorHomeComponent implements OnInit {
                     this.appService.sessionUser.next(user);
                     if (this.messageToSend) {
                         this.messageToSend.from = user;
+                        this.messageToSend.type = 'NEW_MESSAGE';
                         console.log('Ready to send message...');
                         console.dir(this.messageToSend);
                         this.chatService.sendMessage(this.messageToSend);

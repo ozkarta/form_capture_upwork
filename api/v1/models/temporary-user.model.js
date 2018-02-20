@@ -4,7 +4,8 @@ let tempUserSchema = new mongoose.Schema({
     name: {type: String, trim: true},
     phone: {type: String, trim: true},
     token: {type: String, trim: true},
-    deletedFlag: {type: Boolean, default: false}
+    deletedFlag: {type: Boolean, default: false},
+    type: {type: String, default: 'temp'}
 }, {
     timestamps: true
 });
