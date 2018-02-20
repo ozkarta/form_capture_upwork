@@ -73,4 +73,11 @@ export class ChatService {
            user: user
         });
     }
+
+    requestChatList(uid: string) {
+        this.sendMessage({
+            type: 'CHAT_LIST_REQUEST',
+            user: uid
+        });
+    }
 }

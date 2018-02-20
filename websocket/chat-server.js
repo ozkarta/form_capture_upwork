@@ -33,6 +33,10 @@ module.exports.chatServerHandler = (ws) => {
         return sendNewMessage(msg);
     }
 
+    if (msg.type === 'CHAT_LIST_REQUEST') {
+        return getChatList(msg.user);
+    }
+
 
   });
 
@@ -68,12 +72,11 @@ module.exports.chatServerHandler = (ws) => {
   function sendNewMessage(msg) {
     Chat.findOne({
         $and: [
-            {'users.user': msg['to']['_id']},
-            {'users.user': msg['from']['_id']}
+            {'users.user._id': msg['to']['_id']},
+            {'users.user._id': msg['from']['_id']}
         ]
     }).exec()
       .then(chat => {
-          console.dir(chat);
           let senderType;
           if (msg.from.type && msg.from.type === 'temp') {
               senderType = 'temporary'
@@ -82,21 +85,26 @@ module.exports.chatServerHandler = (ws) => {
           }
 
           if (chat) {
-              Chat.findOneAndUpdate(
-                  chat['_id'],
-                  {$push: {messages: {sender: {type: senderType, user: msg.from['_id']}, text: msg.text}}},
-                  {new: true}
-              )
-                  .then(updatedChat => {
-                      console.log('Chat is updated...');
-                  })
+              if (msg.text) {
+                  Chat.findOneAndUpdate(
+                      chat['_id'],
+                      {$push: {messages: {sender: {type: senderType, user: msg.from['_id']}, text: msg.text}}},
+                      {new: true}
+                  )
+                      .then(updatedChat => {
+                          console.log('Chat is updated...');
+                      })
+              }
           } else {
               let chat = new Chat();
               chat.users = [];
               chat.messages = [];
-              chat.users.push({type: 'temporary', user: msg.from['_id']});
-              chat.users.push({type: 'regular', user: msg.to['_id']});
-              chat.messages.push({sender: {type: senderType, user: msg.from['_id']}, text: msg.text});
+              chat.users.push({type: 'temporary', user: msg.from});
+              chat.users.push({type: 'regular', user: msg.to});
+              if (msg.text) {
+                  chat.messages.push({sender: {type: senderType, user: msg.from['_id']}, text: msg.text});
+              }
+
 
               chat.save().then(savedChat => {
                   console.log('Chat is saved...');
@@ -108,6 +116,17 @@ module.exports.chatServerHandler = (ws) => {
       .catch(error => {
          console.dir(error);
       });
+  }
+
+  function getChatList(user) {
+      Chat.find({'users.user._id': user})
+          .exec()
+          .then(chatList => {
+              ws.send(JSON.stringify({type: 'CHAT_LIST_REQUEST', status: 200, chats: chatList}));
+          })
+          .catch(error => {
+              console.dir(error);
+          })
   }
 
   function generateUniqueId(count) {

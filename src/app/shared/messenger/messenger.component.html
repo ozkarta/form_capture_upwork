@@ -11,9 +11,9 @@
 
 
                 <li  class="active bounceInDown">
-                    <a class="clearfix">
+                    <a class="clearfix" *ngFor="let chat of chats" (click)="selectedChat=chat">
                         <div class="friend-name">
-                            <strong >ozbegi kartvelishvili</strong>
+                            <strong> {{getDestinationUser(chat)}} </strong>
                         </div>
                     </a>
                 </li>
