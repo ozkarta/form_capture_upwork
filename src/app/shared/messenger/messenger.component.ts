@@ -9,6 +9,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 })
 
 export class MessengerComponent implements OnInit, OnDestroy {
+    public textMessage: string = '';
     public selectedChat: any = null;
     // chat with user
     public userId: string = null;
@@ -138,19 +139,50 @@ export class MessengerComponent implements OnInit, OnDestroy {
         });
     }
 
-    getDestinationUser(chat) {
-        console.dir(chat);
+    getDestinationUserName(chat) {
+        let user = this.getChatUserNot(chat, this.user['_id']);
+        switch (user.type){
+            case 'regular':
+                return `${user.user['firstName']} ${user.user['lastName']}`;
+            case 'temporary':
+                return `${user.user['name']} (${user.user['phone']})`;
+        }
+    }
+
+    getChatUserNot(chat, myUid) {
 
         for (let i=0; i<chat.users.length; i++) {
 
-            if (chat.users[i].user && !(chat.users[i].user['_id'] === this.user['_id'])) {
-                switch (chat.users[i].type){
-                    case 'regular':
-                        return `${chat.users[i].user['firstName']} ${chat.users[i].user['lastName']}`;
-                    case 'temporary':
-                        return `${chat.users[i].user['name']} (${chat.users[i].user['phone']})`;
-                }
+            if (chat.users[i].user && !(chat.users[i].user['_id'] === myUid)) {
+                return chat.users[i];
             }
         }
+    }
+
+    getChatUser(chat, uid) {
+
+        for (let i=0; i<chat.users.length; i++) {
+
+            if (chat.users[i].user && (chat.users[i].user['_id'] === uid)) {
+                return chat.users[i];
+            }
+        }
+    }
+
+    getChatUserNameById(chat, id) {
+        let user = this.getChatUser(chat, id);
+        switch (user.type) {
+            case 'regular':
+                return `${user.user['firstName']} ${user.user['lastName']}`;
+            case 'temporary':
+                return `${user.user['name']} (${user.user['phone']})`;
+        }
+    }
+    
+    sendMessage(chat) {
+        //let destUser = this.getDestinationUser(chat);
+        console.log(this.textMessage);
+
+        this.textMessage = '';
     }
 }
