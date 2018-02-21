@@ -63,3 +63,39 @@ h4, h5 {
   margin: 0 auto;
   display: block;
 }
+
+.popup-inputs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.popup-inputs input,
+.popup-inputs textarea {
+  width: calc(100% - 80px);
+  resize: none;
+  margin-bottom: 15px;
+}
+
+.popup-inputs p {
+  width: 80px;
+}
+
+.popup-message-button {
+  margin: 0 auto;
+  display: block;
+  font-size: 19px;
+  padding: 3px 15px;
+  letter-spacing: .8px;
+  background-color: #80cc68;
+  color: #fffdfd;
+  cursor: pointer;
+  border: 1px solid #6bf;
+  border-radius: 5px;
+  outline: none;
+}
+
+.popup-close-button {
+  cursor: pointer;
+  border: 1px solid #888;
+  letter-spacing: .7px;
+}

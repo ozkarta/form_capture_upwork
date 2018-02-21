@@ -40,17 +40,22 @@
     <!--ეს კლასი არ შეცვალო!!!-->
     <div class="modal-body">
         <form>
-            Message
-            <input type="textbox" name="text" [(ngModel)]="messageText">
-
-            Name
+          <div class="message-text popup-inputs">
+            <p>Message</p>
+            <textarea type="text" name="text" [(ngModel)]="messageText"> </textarea>
+          </div>
+          <div class="sender-name popup-inputs">
+            <p>Name</p>
             <input type="text" name="name" [(ngModel)]="sender['name']">
-            Phone
+          </div>
+          <div class="sender-mobile popup-inputs">
+            <p>Phone</p>
             <input type="text" name="phone" [(ngModel)]="sender['phone']">
-            <button type="button" (click)="sendMessage()">Send</button>
+          </div>
+          <button class="popup-message-button" type="button" (click)="sendMessage()">Send</button>
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+        <button type="button" class="btn btn-outline-dark popup-close-button" (click)="c('Close click')">Close</button>
     </div>
 </ng-template>

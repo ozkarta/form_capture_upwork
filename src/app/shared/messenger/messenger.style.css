@@ -39,6 +39,14 @@
     color: #777;
 }
 
+.friend-list a {
+  cursor: pointer;
+}
+
+.friend-list li {
+  margin-bottom: 10px;
+}
+
 .friend-list li a .last-message {
     width: 65%;
     white-space: nowrap;
@@ -194,4 +202,26 @@ a:active,
 a:focus {
     text-decoration: none;
     outline: 0;
+}
+
+.back-to-members {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  .chat-box {
+    padding-left: 0;
+  }
+
+  .back-to-members {
+    display: inline-block;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    background-color: transparent;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 3px 10px;
+    color: #777;
+  }
+
 }

@@ -19,7 +19,6 @@
 }
 
 .login-container form input {
-  margin-top: 10px;
   margin-right: 0;
   width: 300px;
 }
@@ -54,4 +53,13 @@
   cursor: pointer;
   background-color: #2b902b;
   color: #e4e5e6;
+}
+
+.login-input-box {
+  height: 62px;
+}
+
+.login-error-message {
+  font-size: 14px;
+  color: #da1414;
 }

@@ -22,7 +22,7 @@
   background-color: #e9e0e0;
 }
 
-@media screen and (max-width: 992px) {
+/*@media screen and (max-width: 992px) {
   .navbar-toggler {
       display: none!important;
   }
@@ -40,10 +40,10 @@
     padding-left: 8px;
     padding-right: 8px;
   }
-}
+}*/
 
 
-@media screen and (max-width: 575px) {
+@media screen and (max-width: 992px) {
   .navbar-container {
     width: 100%;
   }
@@ -74,6 +74,7 @@
 }
 .navbar-nav>li {
     float: none;
+    text-align: center;
 }
 .navbar-nav>li>a {
     padding-top: 10px;
@@ -81,5 +82,10 @@
 }
 .collapse.in{
     display:block !important;
+}
+
+.logged-as h6,
+.logged-as button {
+  margin: 0 auto;
 }
 }
