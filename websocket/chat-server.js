@@ -32,6 +32,7 @@ module.exports.chatServerHandler = (ws) => {
         let wsUser
         for(let i = WS_USER_ARRAY.length-1 ; i>=0; i--){
             if (WS_USER_ARRAY[i].token === msg.token) {
+                console.log('Token match')
                 wsUser = WS_USER_ARRAY[i];
             }
         }
@@ -70,15 +71,16 @@ module.exports.chatServerHandler = (ws) => {
                            handleUserRequests();
                        })
                }
+           } else {
+               if (msg.type === 'REGISTER_TEMP_USER') {
+                   return registerTemporaryUserAndRespond(msg);
+               }
            }
         }
     }
 
 
     function handleUserRequests() {
-        if (msg.type === 'REGISTER_TEMP_USER') {
-            return registerTemporaryUserAndRespond(msg);
-        }
 
         if (msg.type === 'NEW_MESSAGE') {
             return sendNewMessage(msg);
@@ -105,6 +107,7 @@ module.exports.chatServerHandler = (ws) => {
     let tempUser = new TempUser(msg.user);
     tempUser.save()
         .then(user => {
+            console.log(user);
             WS_USER_ARRAY.push({
                 token: user.token,
                 user: {
@@ -155,7 +158,7 @@ module.exports.chatServerHandler = (ws) => {
                   )
                       .then(updatedChat => {
                           console.log('Chat is updated...');
-                          sendUpdatedChatToUsrs(updatedChat);
+                          sendUpdatedChatToUsers(updatedChat);
                       })
                       .catch(error => {
                           console.dir(error);
@@ -175,6 +178,7 @@ module.exports.chatServerHandler = (ws) => {
               chat.save().then(savedChat => {
                   console.log(savedChat);
                   console.log('Chat is saved...');
+                  sendUpdatedChatToUsers(savedChat);
               }).catch(error => {
                   console.dir(error);
               })
@@ -185,7 +189,7 @@ module.exports.chatServerHandler = (ws) => {
       });
   }
 
-  function sendUpdatedChatToUsrs(chat) {
+  function sendUpdatedChatToUsers(chat) {
 
       WS_USER_ARRAY.forEach(wsUser => {
           chat.users.forEach(chatUser => {

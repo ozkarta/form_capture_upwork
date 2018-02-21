@@ -101,13 +101,21 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
         this.chatService.updatedChatArrived.subscribe(
             successResponse => {
-                console.log('Message arrived');
+                console.log('Message arrived In Time');
                 console.dir(successResponse);
-
+                if (!successResponse) {
+                    return;
+                }
+                let updated = false;
                 for (let i=0; i<this.chats.length; i++) {
                     if (this.chats[i]['_id'] === successResponse.chat['_id']) {
                         this.chats[i].messages = successResponse.chat.messages;
+                        updated = true;
                     }
+                }
+
+                if (!updated) {
+                    this.chats.unshift(successResponse.chat);
                 }
             }
         )
