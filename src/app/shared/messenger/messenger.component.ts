@@ -18,6 +18,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
     public registeredUser: any = null;
     public wsConnected: any = false;
     private chatServerWebSocketSubscription = null;
+    private sessionUserSubscribed: boolean = false;
+    private registeredUserSubscribed: boolean = false;
 
     public chats: any[] = [];
 
@@ -38,9 +40,26 @@ export class MessengerComponent implements OnInit, OnDestroy {
         //
         this.appService.sessionUser.subscribe(
             sessionUser => {
+
+                this.sessionUserSubscribed = true;
+                if (sessionUser) {
                     this.sessionUser = sessionUser;
                     this.getChatListTrigger.next(sessionUser);
+                } else {
+                    this.sessionUser = null;
+                }
+            }
+        );
 
+        this.appService.user.subscribe(
+            buyer => {
+                this.registeredUserSubscribed = true;
+                if (buyer) {
+                    this.registeredUser = buyer;
+                    this.getChatListTrigger.next(buyer);
+                } else {
+                    this.registeredUser = null;
+                }
             }
         );
 
@@ -50,21 +69,17 @@ export class MessengerComponent implements OnInit, OnDestroy {
                     console.log('Connected...');
                     this.wsConnected = connected;
                     this.getChatListTrigger.next(connected);
+                } else {
+                    this.wsConnected = false;
                 }
             }
         );
 
-        this.appService.user.subscribe(
-            buyer => {
-                if (buyer) {
-                    this.registeredUser = buyer;
-                    this.getChatListTrigger.next(buyer);
-                }
-            }
-        )
-
         this.chatService.chatListRequestArrived.subscribe(
             successResponse => {
+                if (!successResponse) {
+                    return;
+                }
                 this.chats = successResponse.chats;
                 // If user ID is not  passed then select first and  return
                 if (!this.userId) {
@@ -102,48 +117,25 @@ export class MessengerComponent implements OnInit, OnDestroy {
         });
     }
 
-    // subscribeChatServerWebSocket() {
-    //     console.log('Subscribing web socket...');
-    //     this.chatServerWebSocketSubscription = this.chatService.ws.subscribe(
-    //         successResponse => {
-    //             if (successResponse && successResponse.type === 'CHAT_LIST_REQUEST') {
-    //                 this.chats = successResponse.chats;
-    //                 // If user ID is not  passed then select first and  return
-    //                 if (!this.userId) {
-    //                     if (this.chats.length) {
-    //                         this.selectedChat = this.chats[0];
-    //                     }
-    //                     return;
-    //                 }
-    //                 this.chats.forEach(chat => {
-    //                     chat.users.forEach(user => {
-    //                         if (user['_id'] === this.userId) {
-    //                             this.selectedChat = chat;
-    //                         }
-    //                     })
-    //                 });
-    //
-    //                 if (!this.selectedChat) {
-    //                     // TODO create new chat history
-    //                 }
-    //             }
-    //         },
-    //         error => {
-    //             console.log(error);
-    //         }
-    //     )
-    // }
 
     subscribeGetChatListTrigger() {
         this.getChatListTrigger.subscribe(val => {
 
             console.log('Triggered');
-            if (this.wsConnected && (this.sessionUser || this.registeredUser)) {
+
+            if (this.registeredUserSubscribed && this.sessionUserSubscribed) {
                 this.user = this.sessionUser || this.registeredUser;
+                if (!this.user) {
+                    this.router.navigate(['/']);
+                }
+            }
+            if (this.wsConnected && this.user) {
                 console.log('Requesting chat list');
                 this.chatService.requestChatList(this.user['_id']);
+            } else {
+                this.chats = [];
             }
-        })
+        });
     }
 
     getDestinationUser(chat) {
@@ -152,7 +144,6 @@ export class MessengerComponent implements OnInit, OnDestroy {
         for (let i=0; i<chat.users.length; i++) {
 
             if (chat.users[i].user && !(chat.users[i].user['_id'] === this.user['_id'])) {
-                console.log(chat.users[i].user['_id'] + ' VS ' + this.user['_id'])
                 switch (chat.users[i].type){
                     case 'regular':
                         return `${chat.users[i].user['firstName']} ${chat.users[i].user['lastName']}`;
