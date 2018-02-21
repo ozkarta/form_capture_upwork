@@ -24,6 +24,7 @@ export class VisitorHomeComponent implements OnInit {
     public sendMessageReadyState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public modelRef: NgbModalRef;
     public messageToSend = null;
+    public userInputsDisabled: boolean = false;
 
     constructor(private userService: UserService,
                 private modalService: NgbModal,
@@ -36,7 +37,17 @@ export class VisitorHomeComponent implements OnInit {
         this.appService.sessionUser
             .subscribe(
                 user => {
-                    this.sessionUser = user;
+                    if (user) {
+                        this.sessionUser = user;
+                        this.sender.name = user.name;
+                        this.sender.phone = user.phone;
+                        this.userInputsDisabled = true;
+                    } else {
+                        this.sessionUser = null;
+                        this.sender.name = '';
+                        this.sender.phone = '';
+                        this.userInputsDisabled = false;
+                    }
                 }
             );
 
@@ -57,21 +68,38 @@ export class VisitorHomeComponent implements OnInit {
 
     openNewMessageModal(modalWindow, user) {
         if (this.sessionUser) {
-            this.router.navigate(['chat', user['_id']]);
-            return;
+            // this.router.navigate(['chat', user['_id']]);
+            //return;
+
         }
         this.activeUser = user;
         this.modelRef = this.modalService.open(modalWindow);
     }
 
     sendMessage() {
-        console.log('Sending Message...');
-        console.dir(this.sender);
-        let chatSession = sessionStorage.getItem('chatSessionId');
-        this.chatService.registerTempUser(chatSession, this.sender);
-        this.messageToSend = {
-            text: this.messageText,
-            to: this.activeUser
+        if (!this.sessionUser) {
+            console.log('Sending Message...');
+            console.dir(this.sender);
+            let chatSession = sessionStorage.getItem('chatSessionId');
+            this.chatService.registerTempUser(chatSession, this.sender);
+            this.messageToSend = {
+                text: this.messageText,
+                to: this.activeUser
+            }
+        } else {
+            this.messageToSend = {
+                text: this.messageText,
+                to: this.activeUser,
+                from: this.sessionUser,
+                type: 'NEW_MESSAGE'
+            };
+            this.chatService.sendMessage(this.messageToSend);
+            // Send Message
+            this.messageToSend = null;
+            if (this.modelRef) {
+                this.modelRef.close();
+                this.modelRef = null;
+            }
         }
     }
 

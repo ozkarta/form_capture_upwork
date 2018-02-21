@@ -44,9 +44,9 @@
             <input type="textbox" name="text" [(ngModel)]="messageText">
 
             Name
-            <input type="text" name="name" [(ngModel)]="sender['name']">
+            <input type="text" name="name" [(ngModel)]="sender['name']" [disabled]="userInputsDisabled">
             Phone
-            <input type="text" name="phone" [(ngModel)]="sender['phone']">
+            <input type="text" name="phone" [(ngModel)]="sender['phone']" [disabled]="userInputsDisabled">
             <button type="button" (click)="sendMessage()">Send</button>
         </form>
     </div>
