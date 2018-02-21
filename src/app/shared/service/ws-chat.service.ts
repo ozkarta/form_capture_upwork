@@ -79,7 +79,7 @@ export class ChatService {
         if (this.sessionUser) {
             message.usr = {
                 type: 'temporary',
-                id: this.sessionUser['_id'];
+                id: this.sessionUser['_id']
             }
             message.token = this.sessionUser['token'];
         }
@@ -87,7 +87,7 @@ export class ChatService {
         if (this.registeredUser) {
             message.usr = {
                 type: 'regular',
-                id: this.registeredUser['_id'];
+                id: this.registeredUser['_id']
         }
             message.token = this.chatSessionId;
         }
