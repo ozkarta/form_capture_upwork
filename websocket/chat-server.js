@@ -32,7 +32,6 @@ module.exports.chatServerHandler = (ws) => {
         let wsUser
         for(let i = WS_USER_ARRAY.length-1 ; i>=0; i--){
             if (WS_USER_ARRAY[i].token === msg.token) {
-                console.log('Token match')
                 wsUser = WS_USER_ARRAY[i];
             }
         }
@@ -107,7 +106,6 @@ module.exports.chatServerHandler = (ws) => {
     let tempUser = new TempUser(msg.user);
     tempUser.save()
         .then(user => {
-            console.log(user);
             WS_USER_ARRAY.push({
                 token: user.token,
                 user: {
@@ -134,14 +132,9 @@ module.exports.chatServerHandler = (ws) => {
               {'users.user._id': msg['from']['_id']}
           ]
       };
-      console.log(query);
 
-    Chat.find(query).lean().exec()
-      .then(chats => {
-          console.log('_________________________');
-          console.log('_________________________');
-          let chat = chats[0];
-          console.log(chat);
+    Chat.findOne(query).lean().exec()
+      .then(chat => {
           let senderType;
           if (msg.from.type && msg.from.type === 'temp') {
               senderType = 'temporary'
@@ -176,7 +169,6 @@ module.exports.chatServerHandler = (ws) => {
 
 
               chat.save().then(savedChat => {
-                  console.log(savedChat);
                   console.log('Chat is saved...');
                   sendUpdatedChatToUsers(savedChat);
               }).catch(error => {
@@ -193,9 +185,7 @@ module.exports.chatServerHandler = (ws) => {
 
       WS_USER_ARRAY.forEach(wsUser => {
           chat.users.forEach(chatUser => {
-            console.log(chatUser.user['_id'] + ' VS ' + wsUser.user.usr['_id'])
             if (chatUser.user['_id'].toString() === wsUser.user.usr['_id'].toString()) {
-                console.log('Match Found');
                 wsUser.ws.send(JSON.stringify({type: 'UPDATE_CHAT', status: 200, chat: chat}));
             }
           });
@@ -237,13 +227,4 @@ module.exports.chatServerHandler = (ws) => {
     }
   }
 
-  function setDeletedFlagForUser(token) {
-      TempUser.findOneAndUpdate({token: token}, {deletedFlag: true}, {new: true})
-          .then(result => {
-              console.log('user flag is set to DELETED');
-          })
-          .catch(error => {
-              console.log('Error while removing user from DB');
-          });
-  }
 };
