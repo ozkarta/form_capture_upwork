@@ -70,13 +70,20 @@ module.exports.chatServerHandler = (ws) => {
   }
 
   function sendNewMessage(msg) {
-    Chat.findOne({
-        $and: [
-            {'users.user._id': msg['to']['_id']},
-            {'users.user._id': msg['from']['_id']}
-        ]
-    }).exec()
-      .then(chat => {
+      let query = {
+          $and: [
+              {'users.user._id': msg['to']['_id']},
+              {'users.user._id': msg['from']['_id']}
+          ]
+      };
+      console.log(query);
+
+    Chat.find(query).lean().exec()
+      .then(chats => {
+          console.log('_________________________');
+          console.log('_________________________');
+          let chat = chats[0];
+          console.log(chat);
           let senderType;
           if (msg.from.type && msg.from.type === 'temp') {
               senderType = 'temporary'
@@ -87,12 +94,16 @@ module.exports.chatServerHandler = (ws) => {
           if (chat) {
               if (msg.text) {
                   Chat.findOneAndUpdate(
-                      chat['_id'],
+                      {_id: chat['_id']},
                       {$push: {messages: {sender: {type: senderType, user: msg.from['_id']}, text: msg.text}}},
                       {new: true}
                   )
                       .then(updatedChat => {
+                          console.log(updatedChat);
                           console.log('Chat is updated...');
+                      })
+                      .catch(error => {
+                          console.dir(error);
                       })
               }
           } else {
@@ -107,6 +118,7 @@ module.exports.chatServerHandler = (ws) => {
 
 
               chat.save().then(savedChat => {
+                  console.log(savedChat);
                   console.log('Chat is saved...');
               }).catch(error => {
                   console.dir(error);

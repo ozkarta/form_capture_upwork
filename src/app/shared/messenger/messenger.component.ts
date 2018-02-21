@@ -140,7 +140,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     getDestinationUserName(chat) {
-        let user = this.getChatUserNot(chat, this.user['_id']);
+        let user = this.getChatUserNotMe(chat, this.user['_id']);
         switch (user.type){
             case 'regular':
                 return `${user.user['firstName']} ${user.user['lastName']}`;
@@ -149,7 +149,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         }
     }
 
-    getChatUserNot(chat, myUid) {
+    getChatUserNotMe(chat, myUid) {
 
         for (let i=0; i<chat.users.length; i++) {
 
@@ -180,9 +180,15 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
     
     sendMessage(chat) {
-        //let destUser = this.getDestinationUser(chat);
-        console.log(this.textMessage);
+        let messageToSend = {
+            text: this.textMessage,
+            to: this.getChatUserNotMe(chat, this.user['_id']).user,
+            from: this.user,
+            type: 'NEW_MESSAGE'
+        };
 
+        this.chatService.sendMessage(messageToSend);
         this.textMessage = '';
+        console.log(messageToSend);
     }
 }
