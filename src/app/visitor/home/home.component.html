@@ -40,7 +40,6 @@
     <!--ეს კლასი არ შეცვალო!!!-->
     <div class="modal-body">
         <form>
-<<<<<<< HEAD
           <div class="message-text popup-inputs">
             <p>Message</p>
             <textarea type="text" name="text" [(ngModel)]="messageText"> </textarea>
@@ -54,16 +53,6 @@
             <input type="text" name="phone" [(ngModel)]="sender['phone']">
           </div>
           <button class="popup-message-button" type="button" (click)="sendMessage()">Send</button>
-=======
-            Message
-            <input type="textbox" name="text" [(ngModel)]="messageText">
-
-            Name
-            <input type="text" name="name" [(ngModel)]="sender['name']" [disabled]="userInputsDisabled">
-            Phone
-            <input type="text" name="phone" [(ngModel)]="sender['phone']" [disabled]="userInputsDisabled">
-            <button type="button" (click)="sendMessage()">Send</button>
->>>>>>> a4cea1d59e7a6b4da718fa6bb0d9d29cf1107fc9
         </form>
     </div>
     <div class="modal-footer">
