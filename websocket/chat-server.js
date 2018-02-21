@@ -1,6 +1,7 @@
 let url = require('url');
 let WS_USER_ARRAY = [];
 let TempUser = require('../api/v1/models/temporary-user.model').model;
+let RegularUser = require('../api/v1/models/user.model').model;
 let Chat = require('../api/v1/models/chat.model').model;
 
 module.exports.chatServerHandler = (ws) => {
@@ -25,16 +26,68 @@ module.exports.chatServerHandler = (ws) => {
         return createSessionRequestAndRespond();
     }
 
-    if (msg.type === 'REGISTER_TEMP_USER') {
-        return registerTemporaryUserAndRespond(msg);
+
+
+    if (msg.token) {
+        let wsUser
+        for(let i = WS_USER_ARRAY.length-1 ; i>=0; i--){
+            if (WS_USER_ARRAY[i].token === msg.token) {
+                wsUser = WS_USER_ARRAY[i];
+            }
+        }
+
+        if (wsUser) {
+            handleUserRequests();
+        } else {
+           if (msg.usr) {
+               if (msg.usr.type === 'temporary') {
+                   TempUser.findById(msg.usr.id)
+                       .lean()
+                       .then(user => {
+                           WS_USER_ARRAY.push({
+                               token: user.token,
+                               user: {
+                                   type: 'temporary',
+                                   usr: user
+                               },
+                               ws: ws
+                           });
+                           handleUserRequests();
+                       })
+               }
+               if (msg.usr.type === 'regular') {
+                   RegularUser.findById(msg.usr.id)
+                       .lean()
+                       .then(user => {
+                           WS_USER_ARRAY.push({
+                               token: msg.token,
+                               user: {
+                                   type: 'regular',
+                                   usr: user
+                               },
+                               ws: ws
+                           });
+                           handleUserRequests();
+                       })
+               }
+           } else {
+               if (msg.type === 'REGISTER_TEMP_USER') {
+                   return registerTemporaryUserAndRespond(msg);
+               }
+           }
+        }
     }
 
-    if (msg.type === 'NEW_MESSAGE') {
-        return sendNewMessage(msg);
-    }
 
-    if (msg.type === 'CHAT_LIST_REQUEST') {
-        return getChatList(msg.user);
+    function handleUserRequests() {
+
+        if (msg.type === 'NEW_MESSAGE') {
+            return sendNewMessage(msg);
+        }
+
+        if (msg.type === 'CHAT_LIST_REQUEST') {
+            return getChatList(msg.user);
+        }
     }
 
 
@@ -55,7 +108,10 @@ module.exports.chatServerHandler = (ws) => {
         .then(user => {
             WS_USER_ARRAY.push({
                 token: user.token,
-                user: user,
+                user: {
+                    type: 'temporary',
+                    usr: user
+                },
                 ws: ws
             });
             return ws.send(JSON.stringify({
@@ -70,12 +126,14 @@ module.exports.chatServerHandler = (ws) => {
   }
 
   function sendNewMessage(msg) {
-    Chat.findOne({
-        $and: [
-            {'users.user._id': msg['to']['_id']},
-            {'users.user._id': msg['from']['_id']}
-        ]
-    }).exec()
+      let query = {
+          $and: [
+              {'users.user._id': msg['to']['_id']},
+              {'users.user._id': msg['from']['_id']}
+          ]
+      };
+
+    Chat.findOne(query).lean().exec()
       .then(chat => {
           let senderType;
           if (msg.from.type && msg.from.type === 'temp') {
@@ -87,12 +145,16 @@ module.exports.chatServerHandler = (ws) => {
           if (chat) {
               if (msg.text) {
                   Chat.findOneAndUpdate(
-                      chat['_id'],
+                      {_id: chat['_id']},
                       {$push: {messages: {sender: {type: senderType, user: msg.from['_id']}, text: msg.text}}},
                       {new: true}
                   )
                       .then(updatedChat => {
                           console.log('Chat is updated...');
+                          sendUpdatedChatToUsers(updatedChat);
+                      })
+                      .catch(error => {
+                          console.dir(error);
                       })
               }
           } else {
@@ -108,6 +170,7 @@ module.exports.chatServerHandler = (ws) => {
 
               chat.save().then(savedChat => {
                   console.log('Chat is saved...');
+                  sendUpdatedChatToUsers(savedChat);
               }).catch(error => {
                   console.dir(error);
               })
@@ -115,6 +178,17 @@ module.exports.chatServerHandler = (ws) => {
       })
       .catch(error => {
          console.dir(error);
+      });
+  }
+
+  function sendUpdatedChatToUsers(chat) {
+
+      WS_USER_ARRAY.forEach(wsUser => {
+          chat.users.forEach(chatUser => {
+            if (chatUser.user['_id'].toString() === wsUser.user.usr['_id'].toString()) {
+                wsUser.ws.send(JSON.stringify({type: 'UPDATE_CHAT', status: 200, chat: chat}));
+            }
+          });
       });
   }
 
@@ -153,13 +227,4 @@ module.exports.chatServerHandler = (ws) => {
     }
   }
 
-  function setDeletedFlagForUser(token) {
-      TempUser.findOneAndUpdate({token: token}, {deletedFlag: true}, {new: true})
-          .then(result => {
-              console.log('user flag is set to DELETED');
-          })
-          .catch(error => {
-              console.log('Error while removing user from DB');
-          });
-  }
 };

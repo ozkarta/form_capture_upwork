@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ChatService} from '../service/ws-chat.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AppService} from '../service/app.service';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 @Component({
@@ -8,7 +8,8 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
     styleUrls: ['./messenger.style.css']
 })
 
-export class MessengerComponent implements OnInit {
+export class MessengerComponent implements OnInit, OnDestroy {
+    public textMessage: string = '';
     public selectedChat: any = null;
     // chat with user
     public userId: string = null;
@@ -17,6 +18,9 @@ export class MessengerComponent implements OnInit {
     public sessionUser: any = null;
     public registeredUser: any = null;
     public wsConnected: any = false;
+    private chatServerWebSocketSubscription = null;
+    private sessionUserSubscribed: boolean = false;
+    private registeredUserSubscribed: boolean = false;
 
     public chats: any[] = [];
 
@@ -24,21 +28,38 @@ export class MessengerComponent implements OnInit {
 
     constructor(private chatService: ChatService,
                 private activeRoute:ActivatedRoute,
-                private appService: AppService) {
+                private appService: AppService,
+                private router: Router) {
 
     }
 
     ngOnInit() {
-        console.log('On Init');
+        // console.log('On Init');
         this.subscribeUrlParams();
-        this.subscribeChatServerWebSocket();
+        //this.subscribeChatServerWebSocket();
         this.subscribeGetChatListTrigger();
-
+        //
         this.appService.sessionUser.subscribe(
             sessionUser => {
+
+                this.sessionUserSubscribed = true;
                 if (sessionUser) {
                     this.sessionUser = sessionUser;
                     this.getChatListTrigger.next(sessionUser);
+                } else {
+                    this.sessionUser = null;
+                }
+            }
+        );
+
+        this.appService.user.subscribe(
+            buyer => {
+                this.registeredUserSubscribed = true;
+                if (buyer) {
+                    this.registeredUser = buyer;
+                    this.getChatListTrigger.next(buyer);
+                } else {
+                    this.registeredUser = null;
                 }
             }
         );
@@ -46,22 +67,65 @@ export class MessengerComponent implements OnInit {
         this.chatService.connected.subscribe(
             connected => {
                 if (connected) {
+                    console.log('Connected...');
                     this.wsConnected = connected;
                     this.getChatListTrigger.next(connected);
+                } else {
+                    this.wsConnected = false;
+                }
+            }
+        );
+
+        this.chatService.chatListRequestArrived.subscribe(
+            successResponse => {
+                if (!successResponse) {
+                    return;
+                }
+                this.chats = successResponse.chats;
+                // If user ID is not  passed then select first and  return
+                if (!this.userId) {
+                    if (this.chats.length) {
+                        this.selectedChat = this.chats[0];
+                    }
+                    return;
+                }
+                this.chats.forEach(chat => {
+                    chat.users.forEach(user => {
+                        if (user['_id'] === this.userId) {
+                            this.selectedChat = chat;
+                        }
+                    })
+                });
+            }
+        );
+
+        this.chatService.updatedChatArrived.subscribe(
+            successResponse => {
+                console.log('Message arrived In Time');
+                console.dir(successResponse);
+                if (!successResponse) {
+                    return;
+                }
+                let updated = false;
+                for (let i=0; i<this.chats.length; i++) {
+                    if (this.chats[i]['_id'] === successResponse.chat['_id']) {
+                        this.chats[i].messages = successResponse.chat.messages;
+                        updated = true;
+                    }
+                }
+
+                if (!updated) {
+                    this.chats.unshift(successResponse.chat);
                 }
             }
         )
+    }
 
-        this.appService.user.subscribe(
-            buyer => {
-                if (buyer) {
-                    this.registeredUser = buyer;
-                    this.getChatListTrigger.next(buyer);
-                }
-            }
-        )
-
-
+    ngOnDestroy() {
+        if (this.chatServerWebSocketSubscription) {
+            this.chatServerWebSocketSubscription.unsubscribe();
+            this.chatServerWebSocketSubscription = null;
+        }
     }
 
     subscribeUrlParams() {
@@ -71,63 +135,79 @@ export class MessengerComponent implements OnInit {
         });
     }
 
-    subscribeChatServerWebSocket() {
-        this.chatService.ws.subscribe(
-            successResponse => {
-                if (successResponse && successResponse.type === 'CHAT_LIST_REQUEST') {
-                    this.chats = successResponse.chats;
-                    // If user ID is not  passed then select first and  return
-                    if (!this.userId) {
-                        if (this.chats.length) {
-                            this.selectedChat = this.chats[0];
-                        }
-                        return;
-                    }
-                    this.chats.forEach(chat => {
-                        chat.users.forEach(user => {
-                            if (user['_id'] === this.userId) {
-                                this.selectedChat = chat;
-                            }
-                        })
-                    });
-
-                    if (!this.selectedChat) {
-                        // TODO create new chat history
-                    }
-                }
-            },
-            error => {
-                console.log(error);
-            }
-        )
-    }
 
     subscribeGetChatListTrigger() {
         this.getChatListTrigger.subscribe(val => {
 
             console.log('Triggered');
-            if (this.wsConnected && (this.sessionUser || this.registeredUser)) {
+
+            if (this.registeredUserSubscribed && this.sessionUserSubscribed) {
                 this.user = this.sessionUser || this.registeredUser;
+                if (!this.user) {
+                    this.router.navigate(['/']);
+                }
+            }
+            if (this.wsConnected && this.user) {
                 console.log('Requesting chat list');
                 this.chatService.requestChatList(this.user['_id']);
+            } else {
+                this.chats = [];
             }
-        })
+        });
     }
 
-    getDestinationUser(chat) {
-        console.dir(chat);
+    getDestinationUserName(chat) {
+        let user = this.getChatUserNotMe(chat, this.user['_id']);
+        switch (user.type){
+            case 'regular':
+                return `${user.user['firstName']} ${user.user['lastName']}`;
+            case 'temporary':
+                return `${user.user['name']} (${user.user['phone']})`;
+        }
+    }
+
+    getChatUserNotMe(chat, myUid) {
 
         for (let i=0; i<chat.users.length; i++) {
 
-            if (chat.users[i].user && !(chat.users[i].user['_id'] === this.user['_id'])) {
-                console.log(chat.users[i].user['_id'] + ' VS ' + this.user['_id'])
-                switch (chat.users[i].type){
-                    case 'regular':
-                        return `${chat.users[i].user['firstName']} ${chat.users[i].user['lastName']}`;
-                    case 'temporary':
-                        return `${chat.users[i].user['name']} (${chat.users[i].user['phone']})`;
-                }
+            if (chat.users[i].user && !(chat.users[i].user['_id'] === myUid)) {
+                return chat.users[i];
             }
         }
+    }
+
+    getChatUser(chat, uid) {
+
+        for (let i=0; i<chat.users.length; i++) {
+
+            if (chat.users[i].user && (chat.users[i].user['_id'] === uid)) {
+                return chat.users[i];
+            }
+        }
+    }
+
+    getChatUserNameById(chat, id) {
+        let user = this.getChatUser(chat, id);
+        if (user) {
+            switch (user.type) {
+                case 'regular':
+                    return `${user.user['firstName']} ${user.user['lastName']}`;
+                case 'temporary':
+                    return `${user.user['name']} (${user.user['phone']})`;
+            }
+        }
+    }
+    
+    sendMessage(chat) {
+        let messageToSend = {
+            text: this.textMessage,
+            to: this.getChatUserNotMe(chat, this.user['_id']).user,
+            from: this.user,
+            type: 'NEW_MESSAGE'
+        };
+
+        this.chatService.sendMessage(messageToSend);
+        this.textMessage = '';
+        console.log(messageToSend);
     }
 }

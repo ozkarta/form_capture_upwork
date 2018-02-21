@@ -13,7 +13,7 @@
                 <li  class="active bounceInDown">
                     <a class="clearfix" *ngFor="let chat of chats" (click)="selectedChat=chat">
                         <div class="friend-name">
-                            <strong> {{getDestinationUser(chat)}} </strong>
+                            <strong> {{getDestinationUserName(chat)}} </strong>
                         </div>
                     </a>
                 </li>
@@ -30,31 +30,37 @@
                 <div class="chat-message">
                     <ul class="chat">
 
-                        <li  class="right clearfix">
-                            <div class="chat-body clearfix">
-                                <div class="header">
-                                    <strong class="primary-font">Ozbegi Kartvelishvili</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
-                                </div>
-                                <p>
-                                    this is message text
-                                </p>
-                            </div>
-                        </li>
+                        <ng-container *ngFor="let message of selectedChat.messages">
+                            <!--it's me-->
+                            <ng-container *ngIf="message.sender.user !== user['_id']">
+                                <li  class="left clearfix">
+                                    <div class="chat-body clearfix">
+                                        <div class="header">
+                                            <strong class="primary-font">{{getChatUserNameById(selectedChat, message.sender.user)}}</strong>
+                                            <!--<small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>-->
+                                        </div>
+                                        <p>
+                                            {{message.text}}
+                                        </p>
+                                    </div>
+                                </li>
+                            </ng-container>
 
-                        <li  class="left clearfix">
-                            <div class="chat-body clearfix">
-                                <div class="header">
-                                    <strong class="primary-font">ozkart</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
-                                </div>
-                                <p>
-                                    reply
-                                </p>
-                            </div>
-                        </li>
+                            <ng-container *ngIf="message.sender.user === user['_id']">
+                                <li  class="right clearfix">
+                                    <div class="chat-body clearfix">
+                                        <div class="header">
+                                            <strong class="primary-font">{{getChatUserNameById(selectedChat, message.sender.user)}}</strong>
+                                            <!--<small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>-->
+                                        </div>
+                                        <p>
+                                            {{message.text}}
+                                        </p>
+                                    </div>
+                                </li>
+                            </ng-container>
 
-
+                        </ng-container>
                     </ul>
                 </div>
                 <div class="chatbox-container">
@@ -62,9 +68,10 @@
                     <form  >
                       <div class="chat-box col-md-8 bg-white">
                         <div class="input-group">
-                          <input class="form-control border no-shadow no-rounded" placeholder="Type your message here">
+
+                          <input class="form-control border no-shadow no-rounded" placeholder="Type your message here" name="textMessage" [(ngModel)]="textMessage">
                           <span class="input-group-btn">
-                            <input class="btn btn-success no-rounded" type="submit" value="send">
+                            <input class="btn btn-success no-rounded" type="submit" (click)="sendMessage(selectedChat)" value="send">
                           </span>
                         </div>
                         <!-- /input-group -->
