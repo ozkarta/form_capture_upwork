@@ -3,6 +3,7 @@ import {Observable, Subject} from 'rxjs/Rx';
 import {WebSocketService} from './ws.service';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {AppService} from './app.service';
 
 
 @Injectable()
@@ -12,8 +13,20 @@ export class ChatService {
     public sessionIdAssigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public tempUserRegistered: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     public chatListRequestArrived: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+    public updatedChatArrived: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+    private sessionUser: any = null;
+    private registeredUser: any = null;
+    private chatSessionId = null;
 
-    constructor(private weService: WebSocketService, private http: HttpClient) {
+    constructor(private weService: WebSocketService, private http: HttpClient, private appService: AppService) {
+        this.chatSessionId = sessionStorage.getItem('chatSessionId');
+        this.appService.sessionUser.subscribe(usr => {
+            this.sessionUser = usr;
+        });
+
+        this.appService.user.subscribe(usr => {
+            this.registeredUser = usr;
+        });
 
         console.log('Creating web socket...');
 
@@ -39,8 +52,7 @@ export class ChatService {
                 if (successResponse && successResponse.type === 'NEW_SESSION_REQUEST' && successResponse.status === 200) {
                     sessionStorage.setItem('chatSessionId', successResponse.chatSession);
                     this.sessionIdAssigned.next(true);
-
-                    console.log('this.sessionIdAssigned.next(true);')
+                    this.chatSessionId = successResponse.chatSession;
                 }
 
                 if (successResponse && successResponse.type === 'REGISTER_TEMP_USER' && successResponse.status === 200) {
@@ -52,6 +64,10 @@ export class ChatService {
                 if (successResponse && successResponse.type === 'CHAT_LIST_REQUEST') {
                     this.chatListRequestArrived.next(successResponse);
                 }
+
+                if (successResponse && successResponse.type === 'UPDATE_CHAT') {
+                    this.updatedChatArrived.next(successResponse);
+                }
             },
             error => {
                 console.dir(error);
@@ -60,6 +76,22 @@ export class ChatService {
     }
 
     sendMessage(message: any) {
+        if (this.sessionUser) {
+            message.usr = {
+                type: 'temporary',
+                id: this.sessionUser['_id'];
+            }
+            message.token = this.sessionUser['token'];
+        }
+
+        if (this.registeredUser) {
+            message.usr = {
+                type: 'regular',
+                id: this.registeredUser['_id'];
+        }
+            message.token = this.chatSessionId;
+        }
+
         this.ws.next(message);
     }
 

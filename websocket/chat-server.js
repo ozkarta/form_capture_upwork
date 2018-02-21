@@ -1,6 +1,7 @@
 let url = require('url');
 let WS_USER_ARRAY = [];
 let TempUser = require('../api/v1/models/temporary-user.model').model;
+let RegularUser = require('../api/v1/models/user.model').model;
 let Chat = require('../api/v1/models/chat.model').model;
 
 module.exports.chatServerHandler = (ws) => {
@@ -25,16 +26,67 @@ module.exports.chatServerHandler = (ws) => {
         return createSessionRequestAndRespond();
     }
 
-    if (msg.type === 'REGISTER_TEMP_USER') {
-        return registerTemporaryUserAndRespond(msg);
+
+
+    if (msg.token) {
+        let wsUser
+        for(let i = WS_USER_ARRAY.length-1 ; i>=0; i--){
+            if (WS_USER_ARRAY[i].token === msg.token) {
+                wsUser = WS_USER_ARRAY[i];
+            }
+        }
+
+        if (wsUser) {
+            handleUserRequests();
+        } else {
+           if (msg.usr) {
+               if (msg.usr.type === 'temporary') {
+                   TempUser.findById(msg.usr.id)
+                       .lean()
+                       .then(user => {
+                           WS_USER_ARRAY.push({
+                               token: user.token,
+                               user: {
+                                   type: 'temporary',
+                                   usr: user
+                               },
+                               ws: ws
+                           });
+                           handleUserRequests();
+                       })
+               }
+               if (msg.usr.type === 'regular') {
+                   RegularUser.findById(msg.usr.id)
+                       .lean()
+                       .then(user => {
+                           WS_USER_ARRAY.push({
+                               token: msg.token,
+                               user: {
+                                   type: 'regular',
+                                   usr: user
+                               },
+                               ws: ws
+                           });
+                           handleUserRequests();
+                       })
+               }
+           }
+        }
     }
 
-    if (msg.type === 'NEW_MESSAGE') {
-        return sendNewMessage(msg);
-    }
 
-    if (msg.type === 'CHAT_LIST_REQUEST') {
-        return getChatList(msg.user);
+    function handleUserRequests() {
+        if (msg.type === 'REGISTER_TEMP_USER') {
+            return registerTemporaryUserAndRespond(msg);
+        }
+
+        if (msg.type === 'NEW_MESSAGE') {
+            return sendNewMessage(msg);
+        }
+
+        if (msg.type === 'CHAT_LIST_REQUEST') {
+            return getChatList(msg.user);
+        }
     }
 
 
@@ -55,7 +107,10 @@ module.exports.chatServerHandler = (ws) => {
         .then(user => {
             WS_USER_ARRAY.push({
                 token: user.token,
-                user: user,
+                user: {
+                    type: 'temporary',
+                    usr: user
+                },
                 ws: ws
             });
             return ws.send(JSON.stringify({
@@ -99,8 +154,8 @@ module.exports.chatServerHandler = (ws) => {
                       {new: true}
                   )
                       .then(updatedChat => {
-                          console.log(updatedChat);
                           console.log('Chat is updated...');
+                          sendUpdatedChatToUsrs(updatedChat);
                       })
                       .catch(error => {
                           console.dir(error);
@@ -127,6 +182,19 @@ module.exports.chatServerHandler = (ws) => {
       })
       .catch(error => {
          console.dir(error);
+      });
+  }
+
+  function sendUpdatedChatToUsrs(chat) {
+
+      WS_USER_ARRAY.forEach(wsUser => {
+          chat.users.forEach(chatUser => {
+            console.log(chatUser.user['_id'] + ' VS ' + wsUser.user.usr['_id'])
+            if (chatUser.user['_id'].toString() === wsUser.user.usr['_id'].toString()) {
+                console.log('Match Found');
+                wsUser.ws.send(JSON.stringify({type: 'UPDATE_CHAT', status: 200, chat: chat}));
+            }
+          });
       });
   }
 

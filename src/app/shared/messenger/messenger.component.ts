@@ -96,9 +96,18 @@ export class MessengerComponent implements OnInit, OnDestroy {
                         }
                     })
                 });
+            }
+        );
 
-                if (!this.selectedChat) {
-                    // TODO create new chat history
+        this.chatService.updatedChatArrived.subscribe(
+            successResponse => {
+                console.log('Message arrived');
+                console.dir(successResponse);
+
+                for (let i=0; i<this.chats.length; i++) {
+                    if (this.chats[i]['_id'] === successResponse.chat['_id']) {
+                        this.chats[i].messages = successResponse.chat.messages;
+                    }
                 }
             }
         )
@@ -171,11 +180,13 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
     getChatUserNameById(chat, id) {
         let user = this.getChatUser(chat, id);
-        switch (user.type) {
-            case 'regular':
-                return `${user.user['firstName']} ${user.user['lastName']}`;
-            case 'temporary':
-                return `${user.user['name']} (${user.user['phone']})`;
+        if (user) {
+            switch (user.type) {
+                case 'regular':
+                    return `${user.user['firstName']} ${user.user['lastName']}`;
+                case 'temporary':
+                    return `${user.user['name']} (${user.user['phone']})`;
+            }
         }
     }
     
