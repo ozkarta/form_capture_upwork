@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ChatService} from '../../shared/service/ws-chat.service';
 import {AppService} from '../../shared/service/app.service';
+import {Router} from '@angular/router';
 @Component({
     selector: 'app-visitor-navbar',
     templateUrl: './nav.component.html',
@@ -10,7 +11,8 @@ import {AppService} from '../../shared/service/app.service';
 export class VisitorNavComponent implements OnInit {
     public sessionUser = null;
     constructor(private chatService: ChatService,
-                private appService: AppService) {
+                private appService: AppService,
+                private router: Router) {
     }
 
     ngOnInit() {
@@ -31,5 +33,6 @@ export class VisitorNavComponent implements OnInit {
         this.appService.sessionUser.next(null);
         this.chatService.requestNewChatSession();
         this.chatService.tempUserRegistered.next(null);
+        this.router.navigate(['/']);
     }
 }

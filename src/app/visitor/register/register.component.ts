@@ -23,7 +23,13 @@ export class RegisterComponent implements OnInit, AfterViewChecked {
     }
 
     ngOnInit() {
-
+        this.appService.sessionUser.subscribe(
+            sessionUser => {
+                if (sessionUser) {
+                    this.router.navigate(['/']);
+                }
+            }
+        )
     }
 
     ngAfterViewChecked():void {

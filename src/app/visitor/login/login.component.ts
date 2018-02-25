@@ -2,6 +2,7 @@ import {AfterViewChecked, Component, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../shared/service/user.service';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
+import {AppService} from '../../shared/service/app.service';
 @Component({
     templateUrl: './login.component.html',
     styleUrls: ['./login.style.css']
@@ -14,12 +15,19 @@ export class LoginComponent implements OnInit, AfterViewChecked {
     public globalErrorMessage: string = '';
 
     constructor(private userService: UserService,
-                private router: Router) {
+                private router: Router,
+                private appService: AppService) {
 
     }
 
     ngOnInit() {
-
+        this.appService.sessionUser.subscribe(
+            sessionUser => {
+                if (sessionUser) {
+                    this.router.navigate(['/']);
+                }
+            }
+        )
     }
 
     ngAfterViewChecked():void {
