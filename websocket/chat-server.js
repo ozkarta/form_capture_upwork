@@ -38,6 +38,9 @@ module.exports.chatServerHandler = (ws) => {
 
         if (wsUser) {
             handleUserRequests();
+            if (msg.type === 'REGISTER_TEMP_USER') {
+                return registerTemporaryUserAndRespond(msg);
+            }
         } else {
            if (msg.usr) {
                if (msg.usr.type === 'temporary') {
