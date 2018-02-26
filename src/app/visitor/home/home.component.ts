@@ -23,6 +23,7 @@ export class VisitorHomeComponent implements OnInit {
     public storageUser = null;
     public destinationUser: any = null;
     private chatWSUserIsConnected: boolean = false;
+    private sendMessageQueue: any = null;
 
     constructor(private userService: UserService,
                 private modalService: NgbModal,
@@ -37,6 +38,10 @@ export class VisitorHomeComponent implements OnInit {
         this.chatWSService.connected.subscribe(
             connected => {
                 this.chatWSUserIsConnected = connected;
+                if (this.chatWSUserIsConnected && this.sendMessageQueue) {
+                    this.createNewChatAndSendMessage(this.sendMessageQueue.sender, this.sendMessageQueue.destination);
+                    this.sendMessageQueue = null;
+                }
             }
         )
     }
@@ -79,6 +84,11 @@ export class VisitorHomeComponent implements OnInit {
                         if (response && response.user) {
                             if (this.chatWSUserIsConnected) {
                                 this.createNewChatAndSendMessage(response.user, this.destinationUser);
+                            } else {
+                                this.sendMessageQueue = {
+                                    sender: response.user,
+                                    destination: this.destinationUser
+                                };
                             }
                         }
                     }
@@ -86,6 +96,11 @@ export class VisitorHomeComponent implements OnInit {
         } else {
             if (this.chatWSUserIsConnected) {
                 this.createNewChatAndSendMessage(this.user, this.destinationUser);
+            } else {
+                this.sendMessageQueue = {
+                    sender: this.user,
+                    destination: this.destinationUser
+                };
             }
         }
     }

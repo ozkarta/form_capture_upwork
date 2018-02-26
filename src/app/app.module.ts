@@ -17,6 +17,7 @@ import {WebSocketService} from './shared/service/ws.service';
 import {ChatWebSocketService} from './shared/service/ws-chat.service';
 import {HttpClientModule} from '@angular/common/http';
 import {ChatService} from './shared/service/chat.service';
+import {AppRoutingModule} from './app.routes';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,9 @@ import {ChatService} from './shared/service/chat.service';
       NgbModule.forRoot(),
 
       VisitorModule,
-      BuyerModule
+      BuyerModule,
+
+      AppRoutingModule
   ],
   providers: [
       AppService,

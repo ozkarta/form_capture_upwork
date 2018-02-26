@@ -3,6 +3,7 @@ import {ChatWebSocketService} from '../service/ws-chat.service';
 import {ChatService} from '../service/chat.service';
 import {AppService} from '../service/app.service';
 import {UserService} from '../service/user.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-messenger-component',
@@ -22,7 +23,8 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
   constructor(private chatWSService: ChatWebSocketService,
               private chatService: ChatService,
               private appService: AppService,
-              private userService: UserService) {
+              private userService: UserService,
+              private router: Router) {
 
   }
 
@@ -30,6 +32,9 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
 
     this.appService.user.subscribe(
       user => {
+        if (!user) {
+          this.router.navigate(['/']);
+        }
         this.user = user;
         if (this.user) {
           this.chatService.getChatListForUser(this.user['_id'])
@@ -98,7 +103,6 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
         messageText: this.messageText,
         type: 'NEW_MESSAGE'
       };
-      console.dir(messageBody);
       this.chatWSService.sendMessage(messageBody);
       this.messageText = '';
     } else {
@@ -122,7 +126,6 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
           }
       }
     });
-    console.dir(result);
     return result;
   }
 }
