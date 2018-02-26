@@ -14,8 +14,9 @@ import {UserService} from './shared/service/user.service';
 import {BuyerModule} from './buyer/buyer.module';
 import {MessengerComponent} from './shared/messenger/messenger.component';
 import {WebSocketService} from './shared/service/ws.service';
-import {ChatService} from './shared/service/ws-chat.service';
+import {ChatWebSocketService} from './shared/service/ws-chat.service';
 import {HttpClientModule} from '@angular/common/http';
+import {ChatService} from './shared/service/chat.service';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {HttpClientModule} from '@angular/common/http';
       AppService,
       UserService,
       WebSocketService,
+      ChatWebSocketService,
       ChatService
   ],
   bootstrap: [AppComponent]

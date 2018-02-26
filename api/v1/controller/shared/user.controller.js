@@ -1,6 +1,6 @@
 module.exports = function (express) {
     let router = express.Router();
-    let UserModel = require('../../models/user.model').model;
+    let UserModel = require('../../model/user.model').model;
     let jwt = require('jsonwebtoken');
     let bcrypt = require('bcryptjs');
     let config = require('../../shared/config/config');
@@ -60,6 +60,31 @@ module.exports = function (express) {
         .catch(err => {
                 return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
         });
+
+    });
+
+    router.post('/register-temp-user', (req, res) => {
+
+        UserModel.findOne({ email: req.body.email })
+            .lean()
+            .exec()
+            .then(result => {
+                if (result) {
+                    return res.status(200).send({user: result});
+                }
+
+                let user = new UserModel(req.body);
+                user.role = 'temporary';
+                user.save((err, user) => {
+                    if (err) {
+                        return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
+                    }
+                    return res.status(200).send({user: user});
+                });
+            })
+            .catch(err => {
+                return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
+            });
 
     });
 

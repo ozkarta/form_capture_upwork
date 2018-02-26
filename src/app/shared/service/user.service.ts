@@ -34,6 +34,16 @@ export class UserService {
       });
   }
 
+  public registerTemporaryUser(user: any): Observable<any> {
+    return this.http.post(`${this.apiBaseUrl}/users/register-temp-user`, user)
+        .map(res => {
+            return this.setUserInBworserAfterLogIn(res);
+        })
+        .catch((error:Response|any) => {
+            return Observable.throw(error);
+        });
+  }
+
   public signInUser(userLike: any): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}/users/sign-in`, userLike)
       .map((res: any) => {

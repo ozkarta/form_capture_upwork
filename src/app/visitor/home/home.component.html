@@ -32,7 +32,7 @@
 
 <ng-template #messageWindow let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h4 class="modal-title">Send Message to {{activeUser['firstName'] + ' ' + activeUser['lastName']}}</h4>
+        <h4 class="modal-title">Send Message to {{destinationUser['firstName'] + ' ' + destinationUser['lastName']}}</h4>
         <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -45,12 +45,16 @@
             <textarea type="text" name="text" [(ngModel)]="messageText"> </textarea>
           </div>
           <div class="sender-name popup-inputs">
-            <p>Name</p>
-            <input type="text" name="name" [(ngModel)]="sender['name']">
+            <p>First Name</p>
+            <input type="text" name="name" [(ngModel)]="user['firstName']">
+          </div>
+          <div class="sender-name popup-inputs">
+            <p>Last Name</p>
+            <input type="text" name="name" [(ngModel)]="user['lastName']">
           </div>
           <div class="sender-mobile popup-inputs">
             <p>Phone</p>
-            <input type="text" name="phone" [(ngModel)]="sender['phone']">
+            <input type="text" name="phone" [(ngModel)]="user['phone']">
           </div>
           <button class="popup-message-button" type="button" (click)="sendMessage()">Send</button>
         </form>

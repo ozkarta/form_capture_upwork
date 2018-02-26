@@ -1,213 +1,114 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ChatService} from '../service/ws-chat.service';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChatWebSocketService} from '../service/ws-chat.service';
+import {ChatService} from '../service/chat.service';
 import {AppService} from '../service/app.service';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {UserService} from '../service/user.service';
+
 @Component({
-    templateUrl: './messenger.component.html',
-    styleUrls: ['./messenger.style.css']
+  selector: 'app-messenger-component',
+  templateUrl: './messenger.component.html',
+  styleUrls: ['./messenger.style.css']
 })
 
-export class MessengerComponent implements OnInit, OnDestroy {
-    public textMessage: string = '';
-    public selectedChat: any = null;
-    // chat with user
-    public userId: string = null;
-    // session user or registered user
-    public user: any = null;
-    public sessionUser: any = null;
-    public registeredUser: any = null;
-    public wsConnected: any = false;
-    private chatServerWebSocketSubscription = null;
-    private sessionUserSubscribed: boolean = false;
-    private registeredUserSubscribed: boolean = false;
+export class MessengerComponent implements OnInit, AfterViewChecked {
+  public user: any = null;
+  public chats: any[] = [];
+  public wsUserConnected: boolean = false;
+  public activeChat: any = null;
+  @ViewChild('scrollable') private myScrollContainer: ElementRef;
 
-    public chats: any[] = [];
 
-    public getChatListTrigger: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  public messageText: String = '';
+  constructor(private chatWSService: ChatWebSocketService,
+              private chatService: ChatService,
+              private appService: AppService,
+              private userService: UserService) {
 
-    constructor(private chatService: ChatService,
-                private activeRoute:ActivatedRoute,
-                private appService: AppService,
-                private router: Router) {
+  }
 
-    }
+  ngOnInit() {
 
-    ngOnInit() {
-        // console.log('On Init');
-        this.subscribeUrlParams();
-        //this.subscribeChatServerWebSocket();
-        this.subscribeGetChatListTrigger();
-        //
-        this.appService.sessionUser.subscribe(
-            sessionUser => {
-
-                this.sessionUserSubscribed = true;
-                if (sessionUser) {
-                    this.sessionUser = sessionUser;
-                    this.getChatListTrigger.next(sessionUser);
-                } else {
-                    this.sessionUser = null;
+    this.appService.user.subscribe(
+      user => {
+        this.user = user;
+        if (this.user) {
+          this.chatService.getChatListForUser(this.user['_id'])
+            .subscribe(
+              res => {
+                if (res.chats) {
+                  this.chats = res.chats;
+                  if (this.chats.length) {
+                    this.activeChat = this.chats[0];
+                  }
                 }
-            }
-        );
-
-        this.appService.user.subscribe(
-            buyer => {
-                this.registeredUserSubscribed = true;
-                if (buyer) {
-                    this.registeredUser = buyer;
-                    this.getChatListTrigger.next(buyer);
-                } else {
-                    this.registeredUser = null;
-                }
-            }
-        );
-
-        this.chatService.connected.subscribe(
-            connected => {
-                if (connected) {
-                    console.log('Connected...');
-                    this.wsConnected = connected;
-                    this.getChatListTrigger.next(connected);
-                } else {
-                    this.wsConnected = false;
-                }
-            }
-        );
-
-        this.chatService.chatListRequestArrived.subscribe(
-            successResponse => {
-                if (!successResponse) {
-                    return;
-                }
-                this.chats = successResponse.chats;
-                // If user ID is not  passed then select first and  return
-                if (!this.userId) {
-                    if (this.chats.length) {
-                        this.selectedChat = this.chats[0];
-                    }
-                    return;
-                }
-                this.chats.forEach(chat => {
-                    chat.users.forEach(user => {
-                        if (user['_id'] === this.userId) {
-                            this.selectedChat = chat;
-                        }
-                    })
-                });
-            }
-        );
-
-        this.chatService.updatedChatArrived.subscribe(
-            successResponse => {
-                console.log('Message arrived In Time');
-                console.dir(successResponse);
-                if (!successResponse) {
-                    return;
-                }
-                let updated = false;
-                for (let i=0; i<this.chats.length; i++) {
-                    if (this.chats[i]['_id'] === successResponse.chat['_id']) {
-                        this.chats[i].messages = successResponse.chat.messages;
-                        updated = true;
-                    }
-                }
-
-                if (!updated) {
-                    this.chats.unshift(successResponse.chat);
-                }
-            }
-        )
-    }
-
-    ngOnDestroy() {
-        if (this.chatServerWebSocketSubscription) {
-            this.chatServerWebSocketSubscription.unsubscribe();
-            this.chatServerWebSocketSubscription = null;
+              },
+              error => {
+                console.dir(error);
+              }
+            );
         }
-    }
+      }
+    );
 
-    subscribeUrlParams() {
-        this.activeRoute.params.subscribe(params => {
-            this.userId = params['id'];
-            console.log(this.userId);
+    this.chatWSService.connected.subscribe(
+      connected => {
+        this.wsUserConnected = connected;
+      }
+    );
+
+    this.chatWSService.newMessage.subscribe(
+      response => {
+        this.chats.forEach(chat => {
+          if (chat['_id'] === response.chatId) {
+            chat.messages.push(response.message);
+            //this.scrollToBottom();
+          }
         });
+      }
+    );
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  getChatTitle(chat) {
+    let result = '';
+
+    chat.participants.forEach(participant => {
+      if (participant && participant['_id'] !== this.user['_id']) {
+        result += `${participant['firstName']} ${participant['lastName']}, `;
+      }
+    });
+
+    result = result.substr(0, result.length - 2);
+    return result;
+  }
+
+
+  sendMessage() {
+    if (this.wsUserConnected) {
+      console.log('Sending message...');
+      const chatId = this.activeChat['_id'];
+      const messageFrom = this.user['_id'];
+
+      const messageBody = {
+        chatId: chatId,
+        messageFrom: messageFrom,
+        messageText: this.messageText,
+        type: 'NEW_MESSAGE'
+      };
+      console.dir(messageBody);
+      this.chatWSService.sendMessage(messageBody);
+      this.messageText = '';
+    } else {
+      console.log('WS user is not connected');
     }
+  }
 
-
-    subscribeGetChatListTrigger() {
-        this.getChatListTrigger.subscribe(val => {
-
-            console.log('Triggered');
-
-            if (this.registeredUserSubscribed && this.sessionUserSubscribed) {
-                this.user = this.sessionUser || this.registeredUser;
-                if (!this.user) {
-                    this.router.navigate(['/']);
-                }
-            }
-            if (this.wsConnected && this.user) {
-                console.log('Requesting chat list');
-                this.chatService.requestChatList(this.user['_id']);
-            } else {
-                this.chats = [];
-            }
-        });
-    }
-
-    getDestinationUserName(chat) {
-        let user = this.getChatUserNotMe(chat, this.user['_id']);
-        switch (user.type){
-            case 'regular':
-                return `${user.user['firstName']} ${user.user['lastName']}`;
-            case 'temporary':
-                return `${user.user['name']} (${user.user['phone']})`;
-        }
-    }
-
-    getChatUserNotMe(chat, myUid) {
-
-        for (let i=0; i<chat.users.length; i++) {
-
-            if (chat.users[i].user && !(chat.users[i].user['_id'] === myUid)) {
-                return chat.users[i];
-            }
-        }
-    }
-
-    getChatUser(chat, uid) {
-
-        for (let i=0; i<chat.users.length; i++) {
-
-            if (chat.users[i].user && (chat.users[i].user['_id'] === uid)) {
-                return chat.users[i];
-            }
-        }
-    }
-
-    getChatUserNameById(chat, id) {
-        let user = this.getChatUser(chat, id);
-        if (user) {
-            switch (user.type) {
-                case 'regular':
-                    return `${user.user['firstName']} ${user.user['lastName']}`;
-                case 'temporary':
-                    return `${user.user['name']} (${user.user['phone']})`;
-            }
-        }
-    }
-    
-    sendMessage(chat) {
-        let messageToSend = {
-            text: this.textMessage,
-            to: this.getChatUserNotMe(chat, this.user['_id']).user,
-            from: this.user,
-            type: 'NEW_MESSAGE'
-        };
-
-        this.chatService.sendMessage(messageToSend);
-        this.textMessage = '';
-        console.log(messageToSend);
-    }
+  scrollToBottom(): void {
+    try {
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
 }

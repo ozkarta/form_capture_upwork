@@ -3,8 +3,8 @@ import {UserService} from '../../shared/service/user.service';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {Router} from '@angular/router';
 import {AppService} from '../../shared/service/app.service';
-import {ChatService} from '../../shared/service/ws-chat.service';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {ChatService} from '../../shared/service/chat.service';
 
 @Component({
     templateUrl: './home.component.html',
@@ -15,16 +15,11 @@ export class VisitorHomeComponent implements OnInit {
     public searchOptions: any = {
         zip: ''
     };
-    public messageText: string = '';
-    public sender: any = {};
-
-    public activeUser = null;
     public searchResult: any = null;
-    public sessionUser: any = null;
-    public sendMessageReadyState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public messageText: string = '';
     public modelRef: NgbModalRef;
-    public messageToSend = null;
-    public userInputsDisabled: boolean = false;
+    public user: any = {};
+    public destinationUser: any = null;
 
     constructor(private userService: UserService,
                 private modalService: NgbModal,
@@ -34,24 +29,17 @@ export class VisitorHomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.appService.sessionUser
-            .subscribe(
-                user => {
-                    if (user) {
-                        this.sessionUser = user;
-                        this.sender.name = user.name;
-                        this.sender.phone = user.phone;
-                        this.userInputsDisabled = true;
-                    } else {
-                        this.sessionUser = null;
-                        this.sender.name = '';
-                        this.sender.phone = '';
-                        this.userInputsDisabled = false;
-                    }
-                }
-            );
+        this.subscribeUser();
+    }
 
-        this.subscribeChatTempUserRegisteredResponse();
+    subscribeUser () {
+        this.appService.user.subscribe(
+            user => {
+                if (user) {
+                    this.user = user;
+                }
+            }
+        );
     }
 
     search() {
@@ -67,66 +55,12 @@ export class VisitorHomeComponent implements OnInit {
     }
 
     openNewMessageModal(modalWindow, user) {
-        if (this.sessionUser) {
-            // this.router.navigate(['chat', user['_id']]);
-            //return;
-
-        }
-        this.activeUser = user;
+        this.destinationUser = user;
         this.modelRef = this.modalService.open(modalWindow);
     }
 
     sendMessage() {
-        if (!this.sessionUser) {
-            console.log('Sending Message...');
-            console.dir(this.sender);
-            let chatSession = sessionStorage.getItem('chatSessionId');
-            this.chatService.registerTempUser(chatSession, this.sender);
-            this.messageToSend = {
-                text: this.messageText,
-                to: this.activeUser
-            }
-        } else {
-            this.messageToSend = {
-                text: this.messageText,
-                to: this.activeUser,
-                from: this.sessionUser,
-                type: 'NEW_MESSAGE'
-            };
-            this.chatService.sendMessage(this.messageToSend);
-            // Send Message
-            this.messageToSend = null;
-            if (this.modelRef) {
-                this.modelRef.close();
-                this.modelRef = null;
-            }
-        }
-    }
 
-
-    subscribeChatTempUserRegisteredResponse() {
-        this.chatService.tempUserRegistered.subscribe(
-            user => {
-                if (user) {
-                    console.log('subscribeChatTempUserRegisteredResponse', user);
-                    this.appService.sessionUser.next(user);
-                    if (this.messageToSend) {
-                        this.messageToSend.from = user;
-                        this.messageToSend.type = 'NEW_MESSAGE';
-                        console.log('Ready to send message...');
-                        console.dir(this.messageToSend);
-                        this.chatService.sendMessage(this.messageToSend);
-
-                        // Send Message
-                        this.messageToSend = null;
-                        if (this.modelRef) {
-                            this.modelRef.close();
-                            this.modelRef = null;
-                        }
-                    }
-                }
-            }
-        )
     }
 
 }

@@ -11,6 +11,7 @@ import {VisitorRoutingModule} from './routes';
 import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
 import {VisitorAuthGuard} from './visitor-auth.guard';
+import {TemporaryUserAuthGuard} from './temp-user-auth.guard';
 
 @NgModule({
     declarations: [
@@ -27,7 +28,8 @@ import {VisitorAuthGuard} from './visitor-auth.guard';
         VisitorRoutingModule
     ],
     providers: [
-        VisitorAuthGuard
+        VisitorAuthGuard,
+        TemporaryUserAuthGuard
     ],
     exports: [
         RouterModule,

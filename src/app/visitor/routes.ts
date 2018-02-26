@@ -6,6 +6,7 @@ import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
 import {MessengerComponent} from '../shared/messenger/messenger.component';
 import {VisitorAuthGuard} from './visitor-auth.guard';
+import {TemporaryUserAuthGuard} from './temp-user-auth.guard';
 
 export const routes: Routes = [
     {
@@ -15,11 +16,13 @@ export const routes: Routes = [
     },
     {
         path: 'chat',
-        component: MessengerComponent
+        component: MessengerComponent,
+        canActivate: [TemporaryUserAuthGuard]
     },
     {
         path: 'chat/:id',
-        component: MessengerComponent
+        component: MessengerComponent,
+        canActivate: [TemporaryUserAuthGuard]
     },
     {
         path: 'login',
