@@ -10,18 +10,30 @@ export class AppService {
 
   constructor() {
     console.log('Constructor od app.service');
-    let storageToken = localStorage.getItem('token');
-    let storageUser = localStorage.getItem('user');
+    let storageToken = null;
+    let storageUser = null;
+    if (localStorage.getItem('token')) {
+        try {
+            storageToken = JSON.parse(localStorage.getItem('token'));
+        } catch (err) {
+          console.dir(err);
+        }
+    }
+
+    if (localStorage.getItem('user')) {
+      try {
+          storageUser = JSON.parse(localStorage.getItem('user'));
+      } catch (err) {
+        console.dir(err);
+      }
+    }
+
     if (storageUser) {
       this._user.next(storageUser);
       if (storageToken) {
           this._loggedIn.next(true);
       }
     }
-
-
-
-
   }
 
   get isLoggedIn() {

@@ -75,9 +75,14 @@ export class UserService {
   }
 
   private setUserInBworserAfterLogIn(res: any) {
-      if (res != null && res.token != null && res.auth == true) {
-          localStorage.setItem('token', JSON.stringify(res.token));
-          localStorage.setItem('user', JSON.stringify(res.user));
+      if (res != null && res.auth == true) {
+          if (res.token) {
+              localStorage.setItem('token', JSON.stringify(res.token));
+          }
+
+          if (res.user) {
+              localStorage.setItem('user', JSON.stringify(res.user));
+          }
           this.appService.isLoggedIn.next(true);
           this.appService.user.next(res.user);
           return res;

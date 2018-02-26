@@ -65,12 +65,12 @@ module.exports = function (express) {
 
     router.post('/register-temp-user', (req, res) => {
 
-        UserModel.findOne({ email: req.body.email })
+        UserModel.findOne({ phone: req.body.phone })
             .lean()
             .exec()
             .then(result => {
                 if (result) {
-                    return res.status(200).send({user: result});
+                    return res.status(200).send({auth: true, user: result});
                 }
 
                 let user = new UserModel(req.body);
@@ -79,7 +79,7 @@ module.exports = function (express) {
                     if (err) {
                         return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
                     }
-                    return res.status(200).send({user: user});
+                    return res.status(200).send({auth: true, user: user});
                 });
             })
             .catch(err => {

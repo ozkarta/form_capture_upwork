@@ -46,15 +46,15 @@
           </div>
           <div class="sender-name popup-inputs">
             <p>First Name</p>
-            <input type="text" name="name" [(ngModel)]="user['firstName']">
+            <input type="text" name="firstName" [(ngModel)]="user['firstName']" [disabled]="storageUser">
           </div>
           <div class="sender-name popup-inputs">
             <p>Last Name</p>
-            <input type="text" name="name" [(ngModel)]="user['lastName']">
+            <input type="text" name="lastName" [(ngModel)]="user['lastName']" [disabled]="storageUser">
           </div>
           <div class="sender-mobile popup-inputs">
             <p>Phone</p>
-            <input type="text" name="phone" [(ngModel)]="user['phone']">
+            <input type="text" name="phone" [(ngModel)]="user['phone']" [disabled]="storageUser">
           </div>
           <button class="popup-message-button" type="button" (click)="sendMessage()">Send</button>
         </form>

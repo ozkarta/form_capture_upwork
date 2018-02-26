@@ -20,11 +20,15 @@ export class VisitorNavComponent implements OnInit {
             .subscribe(
                 user => {
                     this.user = user;
+                    console.dir(user);
                 }
             )
     }
 
     destroySession() {
-
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        this.appService.isLoggedIn.next(false);
+        this.appService.user.next(null);
     }
 }

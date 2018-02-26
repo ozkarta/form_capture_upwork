@@ -18,4 +18,14 @@ export class ChatService {
       });
   }
 
+  createNewChat(chat): Observable<any> {
+      return this.http.post(`/api/v1/chat/create-chat`, chat)
+          .map((res: any) => {
+              return res;
+          })
+          .catch((error: Response|any) => {
+              return Observable.throw(error);
+          });
+  }
+
 }

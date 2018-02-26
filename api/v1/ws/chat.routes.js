@@ -44,28 +44,51 @@ module.exports.chatRoteHandler = (express) => {
   });
 
   router.post('/create-chat', (req, res) => {
-    let chat = new Chat(req.body);
 
-    chat.save()
-      .then(savedChat => {
-        async.each(savedChat.participants, (user, callback) => {
-          User.findOneAndUpdate(
-            {'_id': user},
-            {$push: {chats: savedChat['_id']}},
-            {new: true}
-          ).then(updatedUser => {
-            callback();
-          })
-            .catch(error => {
-              console.dir(error);
-            });
-        }, (error) => {
-          res.status(200).json({})
-        })
-      })
-      .catch(error => {
-        console.dir(error);
-      });
+    console.dir(req.body);
+    let query = {
+        $and: [
+        ]
+    };
+
+
+
+    req.body.participants.forEach(participant => {
+      query['$and'].push(
+          {'participants': participant}
+      )
+    });
+
+    console.dir(query);
+
+    Chat.findOne(query).lean().exec()
+        .then(chat => {
+          if (chat) {
+              return res.status(200).json({chat: chat});
+          } else {
+              let chat = new Chat(req.body);
+              chat.save()
+                  .then(savedChat => {
+                      async.each(savedChat.participants, (user, callback) => {
+                          User.findOneAndUpdate(
+                              {'_id': user},
+                              {$push: {chats: savedChat['_id']}},
+                              {new: true}
+                          ).then(updatedUser => {
+                              callback();
+                          })
+                              .catch(error => {
+                                  console.dir(error);
+                              });
+                      }, (error) => {
+                          return res.status(200).json({chat: chat});
+                      })
+                  })
+                  .catch(error => {
+                      console.dir(error);
+                  });
+          }
+        });
   });
 
   return router;

@@ -27,7 +27,7 @@
 
 
 
-      <div class="logged-as form-inline my-2 my-lg-0" *ngIf="user && user.type === 'temporary'">
+      <div class="logged-as form-inline my-2 my-lg-0" *ngIf="user && user.role === 'temporary'">
         <h6>You are logged as {{user.firstName  }} {{user.lastName  }}({{user['phone']}})</h6>
         <button class="btn my-2 my-sm-0" type="submit" (click)="destroySession()">Destroy Current Session</button>
       </div>
