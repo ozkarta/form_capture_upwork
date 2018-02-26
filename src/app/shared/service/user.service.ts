@@ -77,11 +77,11 @@ export class UserService {
   private setUserInBworserAfterLogIn(res: any) {
       if (res != null && res.auth == true) {
           if (res.token) {
-              localStorage.setItem('token', JSON.stringify(res.token));
+              localStorage.setItem('_token', JSON.stringify(res.token));
           }
 
           if (res.user) {
-              localStorage.setItem('user', JSON.stringify(res.user));
+              localStorage.setItem('_user', JSON.stringify(res.user));
           }
           this.appService.isLoggedIn.next(true);
           this.appService.user.next(res.user);

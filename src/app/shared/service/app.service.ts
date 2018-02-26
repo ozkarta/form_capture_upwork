@@ -12,17 +12,17 @@ export class AppService {
     console.log('Constructor od app.service');
     let storageToken = null;
     let storageUser = null;
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem('_token')) {
         try {
-            storageToken = JSON.parse(localStorage.getItem('token'));
+            storageToken = JSON.parse(localStorage.getItem('_token'));
         } catch (err) {
           console.dir(err);
         }
     }
 
-    if (localStorage.getItem('user')) {
+    if (localStorage.getItem('_user')) {
       try {
-          storageUser = JSON.parse(localStorage.getItem('user'));
+          storageUser = JSON.parse(localStorage.getItem('_user'));
       } catch (err) {
         console.dir(err);
       }
