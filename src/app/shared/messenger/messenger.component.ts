@@ -111,4 +111,18 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     } catch (err) { }
   }
+
+  getSenderName(chat, message): string {
+    let result = '';
+    chat.participants.forEach(participant => {
+      if (participant['_id'] === message.sender) {
+          result = `${participant['firstName']} ${participant['lastName']}`;
+          if (participant['role'] === 'temporary') {
+            result += ` (${participant['phone']})`;
+          }
+      }
+    });
+    console.dir(result);
+    return result;
+  }
 }

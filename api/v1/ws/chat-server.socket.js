@@ -37,6 +37,10 @@ module.exports.chatServerHandler = (ws) => {
     }
   });
 
+  ws.on('error', () =>
+      console.log('errored')
+  );
+
   function registerWSUser(msg) {
     console.log('registering...');
     const wsArrayItem = {
