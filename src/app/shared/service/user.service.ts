@@ -59,8 +59,8 @@ export class UserService {
       .map((res: any) => {
 
         if (res != null && res.token == null && res.auth == false) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          localStorage.removeItem('_token');
+          localStorage.removeItem('_user');
           this.appService.isLoggedIn.next(false);
           this.appService.user.next(null);
           return res;
