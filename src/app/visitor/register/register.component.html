@@ -30,41 +30,61 @@
           {{registrationFormErrors['password']}}
         </div>
       </li>
+      <!--<li>-->
+        <!--<p>Country</p>-->
+        <!--<input class="form-control" type="text" placeholder="Country" name="country" [(ngModel)]="user['address']['country']" required>-->
+        <!--<div class="registration-error" *ngIf="registrationFormErrors['country']">-->
+          <!--{{registrationFormErrors['country']}}-->
+        <!--</div>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<p>Province</p>-->
+        <!--<input class="form-control" type="text" placeholder="Province" name="province" [(ngModel)]="user['address']['province']" required>-->
+        <!--<div class="registration-error" *ngIf="registrationFormErrors['province']">-->
+          <!--{{registrationFormErrors['province']}}-->
+        <!--</div>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<p>City</p>-->
+        <!--<input class="form-control" type="text" placeholder="City" name="city" [(ngModel)]="user['address']['city']" required>-->
+        <!--<div class="registration-error" *ngIf="registrationFormErrors['city']">-->
+          <!--{{registrationFormErrors['city']}}-->
+        <!--</div>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<p>Street</p>-->
+        <!--<input class="form-control" type="text" placeholder="Street" name="street" [(ngModel)]="user['address']['street']" required>-->
+        <!--<div class="registration-error" *ngIf="registrationFormErrors['street']">-->
+          <!--{{registrationFormErrors['street']}}-->
+        <!--</div>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<p>Postal Code</p>-->
+        <!--<input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="user['address']['zip']" required>-->
+        <!--<div class="registration-error" *ngIf="registrationFormErrors['zip']">-->
+          <!--{{registrationFormErrors['zip']}}-->
+        <!--</div>-->
+      <!--</li>-->
+
       <li>
-        <p>Country</p>
-        <input class="form-control" type="text" placeholder="Country" name="country" [(ngModel)]="user['address']['country']" required>
-        <div class="registration-error" *ngIf="registrationFormErrors['country']">
-          {{registrationFormErrors['country']}}
-        </div>
+        <p>What are you looking for?</p>
+        <textarea class="form-control" placeholder="Describe what you are looking for" name="whatAreYouLookingFor" [(ngModel)]="user['lookingFor']" required>
+        </textarea>
       </li>
+
       <li>
-        <p>Province</p>
-        <input class="form-control" type="text" placeholder="Province" name="province" [(ngModel)]="user['address']['province']" required>
-        <div class="registration-error" *ngIf="registrationFormErrors['province']">
-          {{registrationFormErrors['province']}}
+        <p>Add Postal Code</p>
+        <div class="tags">
+          <button *ngFor="let z of user.zipCodes" (click)="removeZipCode(z)">{{z}}</button>
         </div>
-      </li>
-      <li>
-        <p>City</p>
-        <input class="form-control" type="text" placeholder="City" name="city" [(ngModel)]="user['address']['city']" required>
-        <div class="registration-error" *ngIf="registrationFormErrors['city']">
-          {{registrationFormErrors['city']}}
-        </div>
-      </li>
-      <li>
-        <p>Street</p>
-        <input class="form-control" type="text" placeholder="Street" name="street" [(ngModel)]="user['address']['street']" required>
-        <div class="registration-error" *ngIf="registrationFormErrors['street']">
-          {{registrationFormErrors['street']}}
-        </div>
-      </li>
-      <li>
-        <p>Postal Code</p>
-        <input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="user['address']['zip']" required>
+        <input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="zip">
+        <button name="addZip" value="Add Zip" (click)="addZipCode()">Add Zip</button>
         <div class="registration-error" *ngIf="registrationFormErrors['zip']">
           {{registrationFormErrors['zip']}}
         </div>
       </li>
+
+
     </ul>
     <button class="btn btn-outline-success submit-registration" type="submit" (click)="register()" [disabled]="!registrationForm.form.valid">Submit</button>
 

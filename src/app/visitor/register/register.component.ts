@@ -11,8 +11,10 @@ import {Router} from '@angular/router';
 export class RegisterComponent implements OnInit, AfterViewChecked {
     public user: any = {
         role: 'buyer',
-        address: {}
+        address: {},
+        zipCodes: []
     };
+    public zip: string = '';
     private registrationForm: NgForm;
     @ViewChild('registrationForm') viewRegistrationForm: NgForm;
 
@@ -69,6 +71,26 @@ export class RegisterComponent implements OnInit, AfterViewChecked {
                     console.dir(error);
                 }
             )
+    }
+
+    addZipCode() {
+        let duplicate: boolean = false;
+        for (let i=0;i< this.user.zipCodes.length; i++) {
+            if (this.zip === this.user.zipCodes[i]) {
+                duplicate = true;
+            }
+        }
+        if (!duplicate) {
+            this.user.zipCodes.push(this.zip);
+        }
+
+        this.zip = '';
+    }
+
+    removeZipCode(zip) {
+        if (this.user.zipCodes.indexOf(zip) >= 0) {
+            this.user.zipCodes.splice(this.user.zipCodes.indexOf(zip), 1);
+        }
     }
 
     public registrationFormErrors = {

@@ -14,7 +14,7 @@
             <ul>
                 <li *ngFor="let user of searchResult">
                     <h5 class="looking-for">{{user['firstName'] + ' ' + user['lastName']}}</h5>
-                    <p class="search-result-text">some text here</p>
+                    <p class="search-result-text">{{user['lookingFor']}}</p>
                     <a class="message-button" (click)="openNewMessageModal(messageWindow, user)">Message</a>
                 </li>
             </ul>

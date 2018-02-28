@@ -14,6 +14,9 @@ let userSchema = new mongoose.Schema({
     zip: {type: String, trim: true}
   },
 
+  zipCodes: [{type: String, trim: true}],
+  lookingFor: {type: String, trim: true},
+
   passwordHash: {type: String},
   role: {type: String, enum: ['buyer', 'temporary']},
   searches: [{type: String, trim: true}]

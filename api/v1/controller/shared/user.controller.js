@@ -9,9 +9,6 @@ module.exports = function (express) {
     let mailer = require('../../shared/mailer');
 
     router.get('/', (req, res) => {
-        console.dir(req.query);
-        console.dir(req.params);
-
         let zip;
 
         if (req.query && req.query.zip) {
@@ -19,8 +16,8 @@ module.exports = function (express) {
         }
 
         if (zip) {
-            UserModel.find({'address.zip': zip})
-                .select('updatedAt createdAt firstName lastName email address role')
+            UserModel.find({'zipCodes': zip})
+                .select('updatedAt createdAt firstName lastName email address role lookingFor')
                 .then(users => {
                     return res.status(200).json({users: users});
                 })
