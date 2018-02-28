@@ -54,8 +54,28 @@ module.exports = function (express) {
                 delete user['passwordHash'];
                 res.status(200).send({ auth: true, token: token , user: user});
 
+                console.log('Message Body');
+                let mailBody =
+                    '<table>'+
+                      '<tr>'+
+                        '<th>FirstName</th>'+
+                        '<th>LastName</th>'+
+                        '<th>Email</th>'+
+                        '<th>LookingFor...</th>'+
+                        '<th>Zip Codes</th>'+
+                      '</tr>'+
+                      '<tr>'+
+                        `<td>${user['firstName']}</td>`+
+                        `<td>${user['lastName']}</td>`+
+                        `<td>${user['email']}</td>`+
+                        `<td>${user['lookingFor']}</td>`+
+                        `<td>${user['zipCodes'].join()}</td>`+
+                      '</tr>'+
+                    '</table>';
 
-                mailer.sendMail(config.admin_email, 'New User Registered', ``, `<h1>${user.firstName} ${user.lastName}</h1>`);
+
+                console.dir(mailBody);
+                mailer.sendMail(config.admin_email, 'New User Registered', `New User Registered`, mailBody);
             });
         })
         .catch(err => {
@@ -80,7 +100,10 @@ module.exports = function (express) {
                     if (err) {
                         return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
                     }
+
+                    //mailer.sendMail(config.admin_email, 'New Visitor Registered', ``, `<h3>Name: ${user.firstName} ${user.lastName}</h3>Phone: ${user.phone}`);
                     return res.status(200).send({auth: true, user: user});
+
                 });
             })
             .catch(err => {
