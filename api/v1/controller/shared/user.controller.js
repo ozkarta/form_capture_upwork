@@ -6,6 +6,7 @@ module.exports = function (express) {
     let config = require('../../shared/config/config');
     let MSG = require('../../shared/messages/messages');
     let util = require('../../shared/util/util');
+    let mailer = require('../../shared/mailer');
 
     router.get('/', (req, res) => {
         console.dir(req.query);
@@ -55,6 +56,9 @@ module.exports = function (express) {
 
                 delete user['passwordHash'];
                 res.status(200).send({ auth: true, token: token , user: user});
+
+
+                mailer.sendMail(config.admin_email, 'New User Registered', ``, `<h1>${user.firstName} ${user.lastName}</h1>`);
             });
         })
         .catch(err => {
@@ -112,6 +116,8 @@ module.exports = function (express) {
                 });
                 delete user['passwordHash'];
                 res.status(200).send({ auth: true, token: token, user: user });
+
+                mailer.sendMail(user.email, 'New Sign In', `You just signed In`);
         })
         .catch(err => {
             return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
