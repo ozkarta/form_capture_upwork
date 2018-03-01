@@ -4,7 +4,8 @@ let WS_USER_ARRAY = [];
 let User = require('../model/user.model').model;
 let Chat = require('./ws-models/chat.model').model;
 let ChatMessage = require('./ws-models/chat-message.model').model;
-
+let mailer = require('../shared/mailer');
+let config = require('../shared/config/config');
 module.exports.chatServerHandler = (ws) => {
   console.log('Client is connected');
   const sessionId = generateUniqueId(50);
@@ -76,7 +77,8 @@ module.exports.chatServerHandler = (ws) => {
           {$push: {messages: savedMessage}},
           {new: true}
         ).then(updatedChat => {
-          sendNewMessageToSocketClients(updatedChat, savedMessage)
+          sendNewMessageToSocketClients(updatedChat, savedMessage);
+          sendNewMessageNotificationToAdmin(updatedChat, savedMessage);
         }).catch(error => {
           console.dir(error);
         });
@@ -100,6 +102,39 @@ function sendNewMessageToSocketClients(chat, message) {
       }
     })
   });
+}
+
+function sendNewMessageNotificationToAdmin(chat, message) {
+  let sender = null;
+  let receiver = null;
+  Chat.populate(chat, {path: 'participants'})
+      .then(populatedChat => {
+        if (populatedChat && populatedChat.participants) {
+            populatedChat.participants.forEach(participant => {
+              if (message.sender.toString() === participant['_id'].toString()) {
+                sender = participant;
+              } else {
+                receiver = participant;
+              }
+            })
+        }
+
+        if (sender && receiver) {
+            let mailBody = 'message From: ' + sender['firstName'] + ' ' + sender['lastName'] + (sender['email']? ('(email: ' + sender['email'] + ')') : ('(Phone: ' + sender['phone'] + ')')) + '<br>'+
+                           'message To: ' + receiver['firstName'] + ' ' + receiver['lastName'] + (receiver['email']? ('(email: ' + receiver['email'] + ')') : ('(Phone: ' + receiver['phone'] + ')')) + '<br>'+
+                           'Text: ' + message.text;
+
+            mailer.sendMail(config.admin_email, 'New Message', ``, mailBody);
+        }
+
+        if (receiver.email) {
+            let mailBody = 'You have new message from : ' + sender['firstName'] + ' ' + sender['lastName'] + (sender['email']? ('(email: ' + sender['email'] + ')') : ('(Phone: ' + sender['phone'] + ')')) + '<br>'+
+                'Text: ' + message.text;
+
+            mailer.sendMail(receiver.email, 'New Message', ``, mailBody);
+        }
+      });
+
 }
 
 
