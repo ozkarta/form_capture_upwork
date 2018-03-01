@@ -1,0 +1,14 @@
+body{ background:#e2e2e2; color:#fff;}
+
+.sidebar-box ul {margin:0px; padding:0px;}
+.sidebar-box {background:#16315b; color:#fff;}
+.sidebar-box h3 {margin-bottom:20px;}
+.list-links {list-style:none; font-size:16px; font-weight:600; letter-spacig:1px;}
+
+.list-links li  {border-top: 1px solid #204372; line-height:38px;margin:0; padding-left:20px}
+.list-links li a { color: #e2e2e2; }
+.list-links li a:hover {text-decoration:none; color: #d6a111; }
+.list-links li:hover {background: #030942; color: #d6a111;}
+
+.content-box {background :#efefef; color : #323232;}
+

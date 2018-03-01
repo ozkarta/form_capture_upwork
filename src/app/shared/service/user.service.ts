@@ -12,6 +12,26 @@ export class UserService {
   constructor(private http: HttpClient,
               private appService: AppService) {}
 
+  public getUsersByZip(): Observable<any> {
+      return this.http.get(`${this.apiBaseUrl}/users/distinct-zip-codes`)
+          .map(res => {
+              return res['usersByZip'];
+          })
+          .catch((error:Response|any) => {
+              return Observable.throw(error);
+          });
+  }
+
+  public updateUser(user): Observable<any> {
+      return this.http.put(`${this.apiBaseUrl}/users`, {user: user})
+          .map(res => {
+              return res['updatedUser'];
+          })
+          .catch((error:Response|any) => {
+              return Observable.throw(error);
+          });
+  }
+
   public getUsersBySearchOptions(options: any): Observable<any> {
 
       return this.http.get(`${this.apiBaseUrl}/users`, {params: options})

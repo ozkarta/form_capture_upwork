@@ -30,6 +30,36 @@ module.exports = function (express) {
 
     });
 
+    router.get('/distinct-zip-codes', (req, res) => {
+        let usersByZip = {};
+        let array = [];
+        UserModel.find({role: 'buyer'})
+            .lean()
+            .select('updatedAt createdAt firstName lastName email role lookingFor zipCodes')
+            .exec()
+            .then(users => {
+                users.forEach(user => {
+                   if (user && user['zipCodes'] && user['zipCodes'].length) {
+                       user['zipCodes'].forEach(zip => {
+                            if (usersByZip[zip]) {
+                                usersByZip[zip].push(user);
+                            } else {
+                                usersByZip[zip] = [];
+                                usersByZip[zip].push(user);
+                            }
+                       });
+                   }
+                });
+
+                Object.keys(usersByZip).forEach(zip => {
+                    array.push({zipCode: zip, user: usersByZip[zip]});
+                });
+                return res.status(200).json({usersByZip: array});
+            });
+
+
+    });
+
     router.post('/register', (req, res) => {
 
         UserModel.findOne({ email: req.body.email })
@@ -150,7 +180,10 @@ module.exports = function (express) {
     });
 
     router.put('/', (req, res) => {
-        return res.status(200).json({});
+        UserModel.findOneAndUpdate({'_id': req.body.user['_id']}, req.body.user, {new: true})
+            .then(updatedUser => {
+                return res.status(200).json({updatedUser: updatedUser});
+            });
     });
 
     return router;

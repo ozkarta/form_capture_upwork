@@ -1,1 +1,27 @@
-Admin Home
+
+<div class="sidebar-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 sidebar-box">
+                <h3>Zip Codes</h3>
+                <ul class="list-links">
+                    <li *ngFor="let usr of usersByZip" (click)="activeZipUser = usr"><a>{{usr['zipCode']}}</a></li>
+
+                </ul>
+            </div>
+            <div class="col-md-9 content-box" *ngIf="activeZipUser">
+                <ul>
+                    <li *ngFor="let user of activeZipUser.user">
+                        <h5 class="looking-for">{{user['firstName'] + ' ' + user['lastName']}}</h5>
+                        <p class="search-result-text">{{user['lookingFor']}}</p>
+                        <button (click)="removeZipCode(user, activeZipUser['zipCode'])"> Remove {{user['firstName'] + ' ' + user['lastName']}}</button>
+                    </li>
+                </ul>
+            </div>
+
+
+        </div>
+
+
+    </div>
+</div>
