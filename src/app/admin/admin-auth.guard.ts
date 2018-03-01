@@ -5,7 +5,7 @@ import {Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot} from '
 import {AppService} from '../shared/service/app.service';
 
 @Injectable()
-export class VisitorAuthGuard implements CanActivate {
+export class AdminAuthGuard implements CanActivate {
     constructor(private router: Router,
                 private appService: AppService) {}
 
@@ -15,19 +15,14 @@ export class VisitorAuthGuard implements CanActivate {
             .map((user: any) => {
                 if (user && user.role) {
                     switch(user.role) {
-                        case  'buyer' :
-                            this.router.navigate(['/buyer']).then();
-                            return false;
-
                         case  'admin' :
-                            this.router.navigate(['/admin']).then();
-                            return false;
-
-                        default:
                             return true;
+                        default:
+                            this.router.navigate(['/']).then();
+                            return false;
                     }
-
                 }
+                this.router.navigate(['/']).then();
                 return true;
             });
     }

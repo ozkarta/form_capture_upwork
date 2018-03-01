@@ -1,8 +1,12 @@
 
 <ng-container>
-  <app-visitor-navbar *ngIf="!(user && user.role === 'buyer')"></app-visitor-navbar>
+  <app-visitor-navbar *ngIf="!(user && (user.role === 'buyer' || user.role === 'admin'))"></app-visitor-navbar>
 
   <ng-container *ngIf="user && user.role === 'buyer'">
     <app-buyer-navbar *ngIf="user.role === 'buyer'"></app-buyer-navbar>
+  </ng-container>
+
+  <ng-container *ngIf="user && user.role === 'admin'">
+    <app-admin-navbar *ngIf="user.role === 'admin'"></app-admin-navbar>
   </ng-container>
 </ng-container>

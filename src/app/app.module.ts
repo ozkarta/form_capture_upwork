@@ -18,6 +18,7 @@ import {ChatWebSocketService} from './shared/service/ws-chat.service';
 import {HttpClientModule} from '@angular/common/http';
 import {ChatService} from './shared/service/chat.service';
 import {AppRoutingModule} from './app.routes';
+import {AdminModule} from './admin/admin.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import {AppRoutingModule} from './app.routes';
   ],
   imports: [
       HttpClientModule,
-    BrowserModule,
+      BrowserModule,
       FormsModule,
       CommonModule,
       BusyModule,
@@ -35,6 +36,7 @@ import {AppRoutingModule} from './app.routes';
 
       VisitorModule,
       BuyerModule,
+      AdminModule,
 
       AppRoutingModule
   ],
