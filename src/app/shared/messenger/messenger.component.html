@@ -144,14 +144,14 @@
 
 <div class="container bootstrap snippet">
   <div class="row messenger-main-container">
-    <div class="bg-white messenger-container ">
+    <div class="bg-white messenger-container " [ngStyle]="messengerContainerStyles">
       <!-- =============================================================== -->
       <!-- member list -->
       <div class="member-list col-md-4">
         <p class="members-header">Members</p>
         <ul class="friend-list">
           <li  class="active bounceInDown">
-            <a class="clearfix" *ngFor="let chat of chats" (click)="activeChat = chat">
+            <a class="clearfix" *ngFor="let chat of chats" (click)="setActiveChat(chat)">
               <div class="friend-name">
                 <strong> {{getChatTitle(chat)}} </strong>
               </div>
@@ -165,7 +165,7 @@
     <!-- selected chat -->
       <div class="chat-container col-md-8">
         <ng-container *ngIf="activeChat">
-          <button class="back-to-members" type="button" name="button">< back</button>
+          <button class="back-to-members" type="button" name="button" (click)="backClick()"> Back</button>
           <p class="chat-person">{{getChatTitle(activeChat)}}</p>
           <div class="bg-white ">
             <div class="chat-message">

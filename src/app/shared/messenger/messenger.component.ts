@@ -18,8 +18,13 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
   public activeChat: any = null;
   @ViewChild('scrollable') private myScrollContainer: ElementRef;
 
+  public mobHeight: any;
+  public mobWidth: any;
 
   public messageText: String = '';
+  public messengerContainerStyles: any = {};
+
+
   constructor(private chatWSService: ChatWebSocketService,
               private chatService: ChatService,
               private appService: AppService,
@@ -71,10 +76,31 @@ export class MessengerComponent implements OnInit, AfterViewChecked {
         });
       }
     );
+
+
+      this.mobHeight = (window.screen.height);
+      this.mobWidth = (window.screen.width);
   }
 
   ngAfterViewChecked() {
     this.scrollToBottom();
+  }
+
+  setActiveChat(chat) {
+    this.activeChat = chat;
+    if (this.mobWidth < 768) {
+      console.log('Setting...')
+      this.messengerContainerStyles = {'margin-left': '-100%'};
+      console.log(this.messengerContainerStyles);
+    }
+  }
+
+  backClick() {
+      if (this.mobWidth < 768) {
+          console.log('Setting...')
+          this.messengerContainerStyles = {'margin-left': '0'};
+          console.log(this.messengerContainerStyles);
+      }
   }
 
   getChatTitle(chat) {
