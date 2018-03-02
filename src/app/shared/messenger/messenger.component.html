@@ -164,12 +164,12 @@
     <!--=========================================================-->
     <!-- selected chat -->
       <div class="chat-container col-md-8">
-        <ng-container *ngIf="activeChat" style="overflow: scroll; height: xyz;" #scrollable>
+        <ng-container *ngIf="activeChat">
           <button class="back-to-members" type="button" name="button">< back</button>
-          <p class="chat-person">Name Surname</p>
+          <p class="chat-person">{{getChatTitle(activeChat)}}</p>
           <div class="bg-white ">
             <div class="chat-message">
-              <ul class="chat">
+              <ul class="chat" style="overflow: scroll; height: xyz;" #scrollable>
 
                 <ng-container *ngFor="let message of activeChat.messages">
                   <!--it's me-->
