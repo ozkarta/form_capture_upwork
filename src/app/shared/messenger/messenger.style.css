@@ -68,7 +68,8 @@
 .friend-list li a .last-message {
     width: 65%;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+       text-overflow: ellipsis;
     overflow: hidden;
 }
 
@@ -81,6 +82,7 @@
 .clearfix {
     border-radius: 5px;
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 small,
@@ -253,6 +255,8 @@ a:focus {
 }
 
 .messenger-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
 }
@@ -276,6 +280,9 @@ a:focus {
     .messenger-container {
       display: inline-table;
       width: 200%;
+      webkit-transition: all 50ms ease-in-out;
+      -webkit-transition: all 50ms ease-in-out;
+      transition: all 50ms ease-in-out;
       /*margin-left: -50%;*/
     }
 
@@ -304,7 +311,4 @@ a:focus {
       position: absolute;
     }
 
-    .clearfix:active + .messenger-container {
-      margin-left: -100%;
-    }
 }

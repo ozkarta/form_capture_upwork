@@ -1,12 +1,21 @@
-.buyer-logout {
-  cursor: pointer;
-  padding: 5px 8px;
-  font-size: 14px;
+.logged-as {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
-.logged-as {
-  display: flex;
-  align-items: center;
+.logo {
+  height: 45px;
+}
+
+.buyer-logout {
+  padding: 5px 9px;
+  font-size: 17px;
+  margin: 0 auto;
+  cursor: pointer;
 }
 
 .logged-as h6 {
@@ -28,27 +37,6 @@
   background-color: #e9e0e0;
 }
 
-/*@media screen and (max-width: 992px) {
-  .navbar-toggler {
-      display: none!important;
-  }
-
-  .navbar-collapse.collapse {
-      display: inline-block!important;
-  }
-
-  .navbar-nav {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .nav-item {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-}*/
-
-
 @media screen and (max-width: 992px) {
   .navbar-container {
     width: 100%;
@@ -65,7 +53,8 @@
 }
 .navbar-collapse {
     border-top: 1px solid transparent;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .navbar-fixed-top {
     top: 0;
@@ -94,8 +83,10 @@
 .logged-as button {
   margin: 0 auto;
 }
-
-.buyer-logout {
-  margin: 0 auto;
 }
+
+@media screen and (max-width: 580px) {
+  nav .container {
+    width: 100%;
+  }
 }
