@@ -12,3 +12,16 @@ body{ background:#e2e2e2; color:#fff;}
 
 .content-box {background :#efefef; color : #323232;}
 
+.add-zip-to-user {
+  margin-top: 10px;
+}
+
+.content-box li {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #999;
+  margin-bottom: 5px;
+}
+
+.content-box {
+  margin-bottom: 10px;
+}

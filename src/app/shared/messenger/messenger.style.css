@@ -5,6 +5,25 @@
 .friend-list {
     list-style: none;
     margin-left: -40px;
+    max-height: calc(100vh - 112px);
+    overflow: auto;
+    padding-right: 15px;
+}
+
+.members-header {
+  margin: 5px 0;
+  text-align: center;
+}
+
+.friend-list::-webkit-scrollbar {
+    width: 5px;
+    background: #e5e5e5;
+}
+
+.friend-list::-webkit-scrollbar-thumb {
+    background: #c1bbc7;
+    border-radius: 20px;
+    border-radius: 5px;
 }
 
 .friend-list li {
@@ -61,6 +80,7 @@
 
 .clearfix {
     border-radius: 5px;
+    margin-bottom: 5px;
 }
 
 small,
@@ -77,12 +97,26 @@ small,
 }
 
 .chat-message {
-    padding: 60px 20px 115px;
+    padding: 60px 20px 20px;
 }
 
 .chat {
     list-style: none;
     margin: 0;
+    overflow: auto;
+    padding-right: 15px;
+    max-height: calc(100vh - 238px);
+}
+
+.chat::-webkit-scrollbar {
+    width: 5px;
+    background: #fff;
+}
+
+.chat::-webkit-scrollbar-thumb {
+    background: #d5d2d8;
+    border-radius: 20px;
+    border-radius: 5px;
 }
 
 .chat-message {
@@ -192,6 +226,12 @@ img {
     -o-transition: all .5s ease;
 }
 
+.chat-person {
+  /*display: none;*/
+  text-align: center;
+  margin: 5px 0;
+}
+
 .primary-font {
     color: #3c8dbc;
 }
@@ -207,6 +247,16 @@ a:focus {
     display: none;
 }
 
+.messenger-main-container {
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.messenger-container {
+  display: flex;
+  width: 100%;
+}
+
 @media screen and (max-width: 767px) {
     .chat-box {
         padding-left: 0;
@@ -214,8 +264,8 @@ a:focus {
 
     .back-to-members {
         display: inline-block;
-        margin-left: 15px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
+        margin-top: 10px;
         background-color: transparent;
         border: 1px solid #aaa;
         border-radius: 3px;
@@ -223,4 +273,38 @@ a:focus {
         color: #777;
     }
 
+    .messenger-container {
+      display: inline-table;
+      width: 200%;
+      /*margin-left: -50%;*/
+    }
+
+    .member-list {
+      float: left;
+    }
+
+    .member-list,
+    .chat-container {
+      width: 50%;
+      display: inline-block;
+      position: relative;
+    }
+
+    .chat-person {
+      position: absolute;
+      top: 5px;
+      right: 15px;
+      font-size: 17px;
+      text-align: right;
+      width: 100%;
+      display: block;;
+    }
+
+    .chatbox-container {
+      position: absolute;
+    }
+
+    .clearfix:active + .messenger-container {
+      margin-left: -100%;
+    }
 }

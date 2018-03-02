@@ -10,9 +10,7 @@
                 </ul>
             </div>
             <div class="col-md-9 content-box" *ngIf="activeZipUser">
-                <h1>{{activeZipUser['zipCode']}}</h1>
-                <h3>Do You want to add new User? <button (click)="addNewUser(createUserModal, activeZipUser)"> Add New User</button></h3>
-
+                <h2 style="text-align:center;">{{activeZipUser['zipCode']}}</h2>
                 <ul>
                     <li *ngFor="let user of activeZipUser.user">
                         <h5 class="looking-for">{{user['firstName'] + ' ' + user['lastName']}}</h5>
@@ -20,6 +18,7 @@
                         <button (click)="removeZipCode(user, activeZipUser['zipCode'])"> Remove {{user['firstName'] + ' ' + user['lastName']}}</button>
                     </li>
                 </ul>
+                <h3>Do You want to add new User? <button (click)="addNewUser(createUserModal, activeZipUser)"> Add New User</button></h3>
             </div>
 
 
@@ -31,14 +30,14 @@
 
 <ng-template #createUserModal let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h4 class="modal-title">Modal title</h4>
+        <h4 class="modal-title">Add user</h4>
         <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
         <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="userModel" [ngbTypeahead]="search" [inputFormatter]="userInputFormatter" [resultFormatter]="userResultFormatter"/>
-        <button (click)="addZipToUser()" [disabled]="disableUserAdd()">Add</button>
+        <button class="add-zip-to-user" (click)="addZipToUser()" [disabled]="disableUserAdd()">Add</button>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
