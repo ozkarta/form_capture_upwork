@@ -10,23 +10,55 @@ module.exports = function (express) {
 
     router.get('/', (req, res) => {
         let zip;
+        let searchWord;
 
         if (req.query && req.query.zip) {
             zip = req.query.zip;
         }
 
+        if (req.query && req.query.search) {
+            searchWord = req.query.search;
+        }
+
         if (zip) {
-            UserModel.find({'zipCodes': zip})
-                .select('updatedAt createdAt firstName lastName email address role lookingFor')
+            return UserModel.find({'zipCodes': zip})
+                .select('updatedAt createdAt firstName lastName email address role lookingFor zipCodes')
                 .then(users => {
                     return res.status(200).json({users: users});
                 })
                 .catch(err => {
                     return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
                 });
-        } else {
-            return res.status(200).json({users: []});
         }
+        // } else {
+        //
+        //
+        //     // return res.status(200).json({users: []});
+        // }
+
+        if (searchWord) {
+            let query = {
+                role: 'buyer',
+                $or: [
+                    {firstName: new RegExp('^' + searchWord + '.*$', "i")},
+                    {lastName: new RegExp('^' + searchWord + '.*$', "i")},
+                ]
+            };
+
+            if (req.query.ne) {
+                query['zipCodes'] = {'$ne': req.query.ne}
+            }
+            return UserModel.find(query)
+                .select('updatedAt createdAt firstName lastName email address role lookingFor zipCodes')
+                .then(users => {
+                    return res.status(200).json({users: users});
+                })
+                .catch(err => {
+                    return util.sendHttpResponseMessage(res, MSG.serverError.internalServerError, err);
+                });
+        }
+
+        return res.status(200).json({users: []});
 
     });
 

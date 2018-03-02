@@ -32,7 +32,7 @@ export class UserService {
           });
   }
 
-  public getUsersBySearchOptions(options: any): Observable<any> {
+  public getUsersBySearchOptions(options: any): Observable<any[]> {
 
       return this.http.get(`${this.apiBaseUrl}/users`, {params: options})
           .map(res => {
