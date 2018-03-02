@@ -10,6 +10,8 @@
                 </ul>
             </div>
             <div class="col-md-9 content-box" *ngIf="activeZipUser">
+                <h3>Do You want to add new User? <button (click)="addNewUser(activeZipUser['zipCode'])"> Add New User</button></h3>
+
                 <ul>
                     <li *ngFor="let user of activeZipUser.user">
                         <h5 class="looking-for">{{user['firstName'] + ' ' + user['lastName']}}</h5>

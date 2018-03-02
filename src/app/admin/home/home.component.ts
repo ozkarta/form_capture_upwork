@@ -53,4 +53,8 @@ export class AdminHomeComponent implements OnInit {
             )
 
     }
+
+    addNewUser(zip) {
+
+    }
 }
