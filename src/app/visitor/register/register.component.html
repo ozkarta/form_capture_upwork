@@ -1,4 +1,4 @@
-<div class="registration-component">
+<div class="registration-component container">
   <h4>Registration</h4>
   <form class="form-inline" #registrationForm="ngForm">
     <ul class="registration-inputs">
@@ -68,17 +68,17 @@
 
       <li>
         <p>What are you looking for?</p>
-        <textarea class="form-control" placeholder="Describe what you are looking for" name="whatAreYouLookingFor" [(ngModel)]="user['lookingFor']" required>
+        <textarea class="looking-for form-control" placeholder="Describe what you are looking for" name="whatAreYouLookingFor" [(ngModel)]="user['lookingFor']" required>
         </textarea>
       </li>
 
-      <li>
+      <li class="postal-code-section">
         <p>Add Postal Code</p>
         <div class="tags">
-          <button *ngFor="let z of user.zipCodes" (click)="removeZipCode(z)">{{z}}</button>
+          <button title="remove zip code" *ngFor="let z of user.zipCodes" (click)="removeZipCode(z)">{{z}}</button>
         </div>
         <input class="form-control" type="text" placeholder="Postal Code" name="zip" [(ngModel)]="zip">
-        <button name="addZip" value="Add Zip" (click)="addZipCode()">Add Zip</button>
+        <button class="add-zip" name="addZip" value="Add Zip" (click)="addZipCode()">Add Zip</button>
         <div class="registration-error" *ngIf="registrationFormErrors['zip']">
           {{registrationFormErrors['zip']}}
         </div>

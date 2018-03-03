@@ -11,6 +11,10 @@
   height: 45px;
 }
 
+.navbar-toggler-right {
+  margin-top: 5px;
+}
+
 .buyer-logout {
   padding: 5px 9px;
   font-size: 17px;

@@ -30,7 +30,7 @@
   list-style-type: none;
   width: 218px;
   margin-bottom: 15px;
-  height: 70px;
+  min-height: 70px;
 }
 
 .registration-error {
@@ -41,6 +41,24 @@
 
 .registration-inputs p {
   margin-bottom: 2px;
+}
+
+.postal-code-section {
+  height: inherit!important;
+}
+
+.looking-for {
+  height: 82px;
+}
+
+.add-zip {
+  margin-top: 10px;
+  background-color: #d2e0e6;
+  border: 1px solid #807b7b;
+  color: #1e442a;
+  padding: 4px 7px;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .submit-registration {

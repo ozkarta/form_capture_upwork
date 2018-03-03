@@ -9,6 +9,11 @@
 
 .logo {
   height: 45px;
+  border: 1px solid #dde;
+}
+
+.navbar-toggler-right {
+  margin-top: 5px;
 }
 
 .buyer-logout {
